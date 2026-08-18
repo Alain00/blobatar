@@ -1,0 +1,10 @@
+# Deploys to Alain's Cloudflare account. Contributors only ever run
+# `bun run dev` — wrangler serves the Worker locally and needs no account.
+name = "blobatar-service"
+main = "src/entry.ts"
+compatibility_date = "2026-08-01"
+
+# No routes on purpose: the Worker is hostname-agnostic by design, so the
+# public hostname is a deploy-time choice that never touches code. The .wasm
+# import rides wrangler's default bundling rules; if bundling is ever
+# customized, add an explicit CompiledWasm rule for "**/*.wasm".

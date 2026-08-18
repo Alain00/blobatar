@@ -27,6 +27,9 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .cache
 *.tsbuildinfo
 
+# wrangler local state (apps/service)
+.wrangler
+
 # IntelliJ based IDEs
 .idea
 

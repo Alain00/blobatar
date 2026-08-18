@@ -1,0 +1,21 @@
+{
+  "name": "service",
+  "private": true,
+  "type": "module",
+  "//dev": "The library must be built before wrangler runs: wrangler bundles workspace deps through their exports maps, and blobatar's points at dist/. wrangler itself requires Node >= 22 on the machine, even when launched through bun.",
+  "scripts": {
+    "dev": "bun run --cwd ../../packages/blobatar build && wrangler dev",
+    "deploy": "bun run --cwd ../../packages/blobatar build && wrangler deploy",
+    "test": "bun test",
+    "check": "bun test"
+  },
+  "dependencies": {
+    "@resvg/resvg-wasm": "^2.6.2",
+    "blobatar": "workspace:*",
+    "render-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "wrangler": "^4"
+  }
+}
