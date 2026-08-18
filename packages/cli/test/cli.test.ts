@@ -90,6 +90,16 @@ describe("single blobatar", () => {
     expect(await c.run()).toBe(1);
     expect(c.err.join("")).toContain("unknown option --palette");
   });
+
+  test("-- ends option parsing, so hyphen-led names render", async () => {
+    const c = cli(["--", "-bot"]);
+    expect(await c.run()).toBe(0);
+    expect(text(c.out)).toBe("<svg>-bot|{}</svg>");
+    // Flags before the marker still work.
+    const d = cli(["--hue", "210", "--", "--stdin"]);
+    expect(await d.run()).toBe(0);
+    expect(text(d.out)).toBe('<svg>--stdin|{"hue":210}</svg>');
+  });
 });
 
 describe("-o", () => {
@@ -238,6 +248,30 @@ describe("batch", () => {
     const c = cli(["--stdin", "-d", "out"], { stdin: "\n\n" });
     expect(await c.run()).toBe(1);
     expect(c.err.join("")).toContain("no names");
+  });
+
+  test("a trailing slash on -d does not double up, and a bare root survives", async () => {
+    const c = cli(["--stdin", "-d", "out/"], { stdin: "alain\n" });
+    expect(await c.run()).toBe(0);
+    expect([...c.files.keys()]).toEqual(["out/alain.svg"]);
+    // "-d /" must stay the root, not become mkdir("").
+    const d = cli(["--stdin", "-d", "/"], { stdin: "alain\n" });
+    expect(await d.run()).toBe(0);
+    expect(d.dirs).toEqual(["/"]);
+    expect([...d.files.keys()]).toEqual(["/alain.svg"]);
+  });
+
+  test("names differing only by case collide — case-insensitive filesystems", async () => {
+    // On default macOS/Windows volumes "UserA.svg" and "usera.svg" are one
+    // file: the second write would silently clobber the first, defeating the
+    // preflight exactly when --no-normalize is preserving case-sensitive ids.
+    const c = cli(["--stdin", "-d", "out", "--no-normalize"], { stdin: "UserA\nusera\n" });
+    expect(await c.run()).toBe(1);
+    const err = c.err.join("");
+    expect(err).toContain("collision");
+    expect(err).toContain("UserA");
+    expect(err).toContain("usera");
+    expect(c.files.size).toBe(0);
   });
 });
 

@@ -131,8 +131,10 @@ export function parseParams(raw: RawParams): ParseResult {
     if (tone === undefined)
       return { ok: false, error: "tone must be an integer between 0 and 100" };
     // The URL speaks 0–100 to stay in integers (a float param would make the
-    // cache key space unbounded); the library speaks 0–1.
-    options.tone = tone / 100;
+    // cache key space unbounded); the library speaks 0–1 — half-open: its tone
+    // buckets test `v < edge`, so an exact 1 wraps to the first swatch instead
+    // of the last. 100 maps to the library's own override clamp (0.999999).
+    options.tone = Math.min(tone / 100, 0.999999);
     canonical.tone = String(tone);
   }
 

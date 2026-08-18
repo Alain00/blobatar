@@ -102,9 +102,16 @@ describe("parseParams", () => {
         options: { tone: 0.4 },
         canonical: { tone: "40" },
       });
+    });
+
+    test("100 lands just under 1 — the tone range is half-open", () => {
+      // The library buckets tone with `v < edge` and the last edge is 1.0, so
+      // an exact 1 falls through and wraps to the FIRST swatch: tone=100 would
+      // render the same bytes as tone=0. Verified empirically. The clamp value
+      // is the library's own (traits.ts uses 0.999999 for overrides).
       expect(parseParams({ tone: "100" })).toEqual({
         ok: true,
-        options: { tone: 1 },
+        options: { tone: 0.999999 },
         canonical: { tone: "100" },
       });
     });

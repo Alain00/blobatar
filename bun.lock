@@ -91,6 +91,7 @@
     },
     "packages/render-core": {
       "name": "render-core",
+      "version": "0.0.0",
       "dependencies": {
         "blobatar": "workspace:*",
       },

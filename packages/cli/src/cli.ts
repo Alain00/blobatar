@@ -81,10 +81,25 @@ function parseArgv(argv: string[]): Parsed | { error: string } {
     const value = rest.shift();
     return value === undefined ? { error: `${flag} requires a value` } : value;
   };
+  const positional = (token: string): { error: string } | undefined => {
+    if (parsed.name !== undefined)
+      return { error: `expected one name, got "${parsed.name}" and "${token}"` };
+    parsed.name = token;
+    return undefined;
+  };
 
   const rest = [...argv];
   while (rest.length > 0) {
     const token = rest.shift()!;
+    // The conventional end-of-options marker: everything after it is a name,
+    // which is how a name like "-bot" gets rendered at all.
+    if (token === "--") {
+      for (const t of rest.splice(0)) {
+        const err = positional(t);
+        if (err) return err;
+      }
+      break;
+    }
     // `--flag=value` is the same as `--flag value`.
     const eq = token.startsWith("--") ? token.indexOf("=") : -1;
     const flag = eq === -1 ? token : token.slice(0, eq);
@@ -108,10 +123,9 @@ function parseArgv(argv: string[]): Parsed | { error: string } {
       else parsed.dir = value;
     } else if (flag.startsWith("-") && flag !== "-") {
       return { error: `unknown option ${flag} (see blobatar --help)` };
-    } else if (parsed.name !== undefined) {
-      return { error: `expected one name, got "${parsed.name}" and "${token}"` };
     } else {
-      parsed.name = token;
+      const err = positional(token);
+      if (err) return err;
     }
   }
   return parsed;
@@ -147,7 +161,10 @@ export async function run(io: CliIO, deps: CliDeps): Promise<0 | 1> {
     return fail("-d is for batches and requires --stdin (write one blobatar with -o)");
 
   if (parsed.stdin) {
-    const dir = parsed.dir!.replace(/\/+$/, "");
+    // Verbatim: trimming trailing slashes turns "-d /" into mkdir("") and a
+    // Windows drive root into a relative path. The join below handles the
+    // separator instead.
+    const dir = parsed.dir!;
     const format = parsed.format ?? "svg";
     // An exact duplicate is the same blobatar twice — deduped, not an error.
     // A Set keeps insertion order, so output order still follows the input.
@@ -160,28 +177,32 @@ export async function run(io: CliIO, deps: CliDeps): Promise<0 | 1> {
     if (names.length === 0) return fail("stdin carried no names");
 
     // Every filename is precomputed before anything touches disk: a collision
-    // aborts the whole batch instead of silently overwriting a blobatar.
+    // aborts the whole batch instead of silently overwriting a blobatar. The
+    // grouping key is lowercased because on default macOS/Windows volumes two
+    // casings are one file — the preflight must catch what the filesystem
+    // would merge, which matters exactly when --no-normalize preserves case.
     const normalize = options.normalize !== false;
-    const byFile = new Map<string, string[]>();
+    const byFile = new Map<string, { file: string; owners: string[] }>();
     for (const name of names) {
       const file = `${filename(name, normalize)}.${format}`;
-      const owners = byFile.get(file);
-      if (owners) owners.push(name);
-      else byFile.set(file, [name]);
+      const entry = byFile.get(file.toLowerCase());
+      if (entry) entry.owners.push(name);
+      else byFile.set(file.toLowerCase(), { file, owners: [name] });
     }
-    const collisions = [...byFile].filter(([, owners]) => owners.length > 1);
+    const collisions = [...byFile.values()].filter((entry) => entry.owners.length > 1);
     if (collisions.length > 0)
       return fail(
         "filename collision — nothing written:\n" +
           collisions
-            .map(([file, owners]) => `  ${file}: ${owners.map((n) => JSON.stringify(n)).join(", ")}`)
+            .map((e) => `  ${e.file}: ${e.owners.map((n) => JSON.stringify(n)).join(", ")}`)
             .join("\n"),
       );
 
     await io.mkdir(dir);
-    for (const [file, [name]] of byFile) {
-      const data = format === "svg" ? deps.render(name!, options) : await png(deps, name!, options);
-      await io.writeFile(`${dir}/${file}`, data);
+    for (const { file, owners } of byFile.values()) {
+      const name = owners[0]!;
+      const data = format === "svg" ? deps.render(name, options) : await png(deps, name, options);
+      await io.writeFile(dir.endsWith("/") ? `${dir}${file}` : `${dir}/${file}`, data);
     }
     return 0;
   }
