@@ -149,12 +149,14 @@ export async function run(io: CliIO, deps: CliDeps): Promise<0 | 1> {
   if (parsed.stdin) {
     const dir = parsed.dir!.replace(/\/+$/, "");
     const format = parsed.format ?? "svg";
-    const names: string[] = [];
+    // An exact duplicate is the same blobatar twice — deduped, not an error.
+    // A Set keeps insertion order, so output order still follows the input.
+    const seen = new Set<string>();
     for (const line of (await io.readStdin()).split("\n")) {
       const name = line.trim();
-      // An exact duplicate is the same blobatar twice — deduped, not an error.
-      if (name !== "" && !names.includes(name)) names.push(name);
+      if (name !== "") seen.add(name);
     }
+    const names = [...seen];
     if (names.length === 0) return fail("stdin carried no names");
 
     // Every filename is precomputed before anything touches disk: a collision

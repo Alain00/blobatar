@@ -137,6 +137,15 @@ describe("parseParams", () => {
         expect(parseParams({ expression })).toEqual({ ok: false, error });
       }
     });
+
+    test("rejects prototype keys — a 400, never a downstream crash", () => {
+      // A plain-object roster answers truthily to "__proto__" and friends;
+      // whatever comes back is not an Expression and would 500 in the render.
+      const error = "expression must be one of: happy, sad, mad, idle";
+      for (const expression of ["__proto__", "constructor", "toString", "hasOwnProperty"]) {
+        expect(parseParams({ expression })).toEqual({ ok: false, error });
+      }
+    });
   });
 
   describe("normalize", () => {
