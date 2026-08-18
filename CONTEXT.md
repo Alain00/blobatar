@@ -131,8 +131,9 @@ consumer and is not gated at all. A blobatar can be sad and still breathing.
 ### The repo
 
 **Package**:
-A workspace member under `packages/` — publishable. Currently just
-`blobatar` itself.
+A workspace member under `packages/` — publishable. `render-core` is the
+deliberate exception: a private support package, never published, bundled into
+the surfaces that consume it.
 
 **App**:
 A workspace member under `apps/` — never published, and always consumes
