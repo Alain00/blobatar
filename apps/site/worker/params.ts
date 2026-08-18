@@ -81,9 +81,12 @@ function number(raw: string, key: string, min: number, max: number): number {
 }
 
 function oneOf<T>(raw: string, key: string, table: Record<string, T>): T {
-  // `in` rather than a truthy lookup: `background=none` maps to `false`, and a
-  // truthiness check would reject the one value that has to be falsy.
-  if (!(raw in table)) {
+  // An own-property check rather than `in` or a truthy lookup. `in` walks the
+  // prototype chain, so "__proto__" and "constructor" passed and handed back
+  // Object.prototype — not a value of the table, and a crash downstream. A
+  // truthiness check would reject the one value that has to be falsy
+  // (`background=none` maps to `false`).
+  if (!Object.hasOwn(table, raw)) {
     throw new BadRequest(`unknown ${key} "${raw}" — expected one of ${Object.keys(table).join(", ")}`);
   }
   return table[raw]!;

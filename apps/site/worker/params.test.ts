@@ -45,6 +45,16 @@ test("the roster is exactly the thirteen poses", () => {
   bad(() => opts("expression=bakePose"));
 });
 
+test("prototype keys are not poses either", () => {
+  // `"__proto__" in table` is true — `in` walks the prototype chain — so these
+  // used to come back as Object.prototype and friends, which are not
+  // Expressions and crash the render: a caller typo served as a 500.
+  bad(() => opts("expression=__proto__"));
+  bad(() => opts("expression=constructor"));
+  bad(() => opts("expression=toString"));
+  bad(() => opts("background=__proto__"));
+});
+
 test("an undocumented parameter is an error, not a silent drop", () => {
   // The failure this exists for: a typo renders a valid blobatar wearing the
   // wrong face, and the caller has nothing to notice.
