@@ -94,10 +94,12 @@ export function parseParams(raw: RawParams): ParseResult {
   }
 
   if (raw.expression !== undefined) {
-    const expression = EXPRESSIONS[raw.expression];
-    if (!expression)
+    // Own-property check: a plain object answers truthily to "__proto__" and
+    // "constructor", and neither is an Expression — without this, a crafted
+    // URL turns a 400 into a downstream crash.
+    if (!Object.hasOwn(EXPRESSIONS, raw.expression))
       return { ok: false, error: "expression must be one of: happy, sad, mad, idle" };
-    options.expression = expression;
+    options.expression = EXPRESSIONS[raw.expression];
     canonical.expression = raw.expression;
   }
 
