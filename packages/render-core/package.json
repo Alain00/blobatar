@@ -1,0 +1,19 @@
+{
+  "name": "render-core",
+  "private": true,
+  "//private": "The deliberate exception to \"a Package is publishable\" (CONTEXT.md): a private support package. Never published — wrangler bundles it into the service Worker, and the CLI build inlines it into the distributed output. Its exports map points at TypeScript source because every consumer is a bundler that transpiles.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "bun test",
+    "check": "bun test"
+  },
+  "dependencies": {
+    "blobatar": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
