@@ -12,6 +12,14 @@ import { blobatar } from "blobatar";
 import { version } from "../package.json";
 import { run } from "./cli";
 
+// `blobatar name | head -c 100`: the downstream end closes early and node
+// raises EPIPE on the next stdout write. The Unix convention is a quiet
+// success — the reader got everything it wanted.
+process.stdout.on("error", (err: NodeJS.ErrnoException) => {
+  if (err.code === "EPIPE") process.exit(0);
+  throw err;
+});
+
 const code = await run(
   {
     argv: process.argv.slice(2),

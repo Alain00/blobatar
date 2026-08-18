@@ -14,10 +14,10 @@
     "check": "bun test && bun run build && bun run smoke",
     "prepack": "bun run build"
   },
-  "//dependencies": "Exactly these two at runtime: render-core is private and gets inlined into dist by the build. resvg-js ships per-platform napi prebuilds as optionalDependencies with no postinstall.",
+  "//dependencies": "Exactly these two at runtime: render-core is private and gets inlined into dist by the build. resvg-js ships per-platform napi prebuilds as optionalDependencies with no postinstall. blobatar is a real semver range rather than workspace:* — bun still links the workspace member because it satisfies the range, while a tarball built by any tool (npm pack included, which does not rewrite the workspace protocol) stays installable.",
   "dependencies": {
     "@resvg/resvg-js": "^2.6.2",
-    "blobatar": "workspace:*"
+    "blobatar": "^0.2.0"
   },
   "devDependencies": {
     "@types/bun": "latest",
