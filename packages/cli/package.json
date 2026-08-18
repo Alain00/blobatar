@@ -1,0 +1,35 @@
+{
+  "name": "blobatar-cli",
+  "version": "0.1.0",
+  "description": "Deterministic geometric blobatars from any string, in your terminal.",
+  "type": "module",
+  "bin": { "blobatar": "./dist/blobatar.mjs" },
+  "files": ["dist", "README.md"],
+  "//engines": "The published artifact runs under plain node — npx is where the non-JS-project audience lives — so src/ uses no Bun-only APIs. A deliberate, documented exception to the repo's Bun-first preference; bun and bunx work too.",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "test": "bun test",
+    "build": "bun scripts/build.ts",
+    "smoke": "node scripts/smoke.mjs",
+    "check": "bun test && bun run build && bun run smoke",
+    "prepack": "bun run build"
+  },
+  "//dependencies": "Exactly these two at runtime: render-core is private and gets inlined into dist by the build. resvg-js ships per-platform napi prebuilds as optionalDependencies with no postinstall.",
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "blobatar": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "render-core": "workspace:*"
+  },
+  "keywords": ["blobatar", "avatar", "identicon", "svg", "png", "cli", "deterministic"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alain00/blobatar.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/Alain00/blobatar#readme",
+  "bugs": "https://github.com/Alain00/blobatar/issues"
+}

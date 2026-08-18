@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    // No react here — the root default lists it and this member never renders JSX.
+    "types": ["bun"],
+    // main.ts reads `version` from package.json; the build inlines it.
+    "resolveJsonModule": true
+  },
+  "include": ["src", "test", "scripts"]
+}
