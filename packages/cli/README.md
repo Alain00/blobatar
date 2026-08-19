@@ -7,7 +7,7 @@ project required — designers, CI pipelines, shell scripts, database seeds:
 npx blobatar-cli alain > alain.svg     # or: bunx blobatar-cli alain
 ```
 
-Install it globally and the command is just `blobatar`:
+Installed globally, it answers to just `blobatar`:
 
 ```sh
 npm i -g blobatar-cli                  # or: bun add -g blobatar-cli
@@ -42,7 +42,7 @@ Knowledge transfers between a URL and a terminal in both directions:
 
 ## Output rules
 
-SVG goes to stdout by default, so the tool composes with pipes and redirects.
+SVG goes to stdout by default, so the CLI composes with pipes and redirects.
 PNG is binary and never lands on a TTY: write it with `-o file.png`, or pipe
 stdout together with `--format png`. With `-o` the extension decides the
 format, and a contradicting `--format` is an error. Errors go to stderr —

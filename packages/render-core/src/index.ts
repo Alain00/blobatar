@@ -122,9 +122,12 @@ export const MAX_SIZE = 1024;
  * nobody documents is a typo, and `?expresion=happy` rendering a perfectly
  * valid blobatar wearing the wrong face is a bug the caller cannot see.
  */
-const IGNORED = ["d", "default", "f", "forcedefault", "r", "rating"];
+export const IGNORED = ["d", "default", "f", "forcedefault", "r", "rating"];
 
-const KNOWN = ["s", "size", "background", "hue", "tone", "expression", "title", "gen", ...IGNORED];
+// Exported alongside `IGNORED` for the CLI's parity test: a param added here
+// must surface as a flag, or that suite fails — divergence between the two
+// string surfaces is a test failure, not a code review catch.
+export const KNOWN = ["s", "size", "background", "hue", "tone", "expression", "title", "gen", ...IGNORED];
 
 function number(raw: string, key: string, min: number, max: number): number {
   const n = Number(raw);

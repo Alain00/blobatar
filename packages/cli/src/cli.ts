@@ -80,7 +80,7 @@ Options:
  * shared table. A flag here and a query key there are the same word on
  * purpose: \`--tone 0.4\` and \`?tone=0.4\` must be one sentence.
  */
-const PARAM_FLAGS: Record<string, string> = {
+export const PARAM_FLAGS: Record<string, string> = {
   "--size": "size",
   "--background": "background",
   "--hue": "hue",

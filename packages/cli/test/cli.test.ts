@@ -6,8 +6,9 @@
  * asserted here is that flags reach that table and its answers reach the user.
  */
 import { describe, expect, test } from "bun:test";
+import { IGNORED, KNOWN } from "render-core";
 
-import { run, type CliDeps, type CliIO } from "../src/cli";
+import { PARAM_FLAGS, run, type CliDeps, type CliIO } from "../src/cli";
 
 function cli(argv: string[], opts: { tty?: boolean; stdin?: string } = {}) {
   const out: (Uint8Array | string)[] = [];
@@ -347,6 +348,21 @@ describe("batch", () => {
     expect(err).toContain("UserA");
     expect(err).toContain("usera");
     expect(c.files.size).toBe(0);
+  });
+});
+
+describe("parity with the endpoint", () => {
+  test("every param the table knows is spellable as a flag, minus the URL-only spellings", () => {
+    // The structural guarantee behind "one validation table": a param added to
+    // render-core must surface here as a flag — or be added to URL_ONLY with a
+    // reason — before this suite goes green again. The allowed asymmetries are
+    // Gravatar compatibility, which only a URL carries: the `s` alias for size
+    // and the accepted-and-ignored params.
+    const URL_ONLY = ["s", ...IGNORED];
+    const flags = new Set(Object.values(PARAM_FLAGS));
+    expect(KNOWN.filter((p) => !URL_ONLY.includes(p) && !flags.has(p))).toEqual([]);
+    // And the inverse: no flag spells a param the table does not know.
+    expect([...flags].filter((p) => !KNOWN.includes(p))).toEqual([]);
   });
 });
 

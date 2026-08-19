@@ -4,7 +4,7 @@
   "description": "Deterministic geometric blobatars from any string, in your terminal.",
   "type": "module",
   "bin": { "blobatar": "./dist/blobatar.mjs" },
-  "files": ["dist", "README.md"],
+  "files": ["dist", "README.md", "CHANGELOG.md"],
   "//engines": "The published artifact runs under plain node — npx is where the non-JS-project audience lives — so src/ uses no Bun-only APIs. A deliberate, documented exception to the repo's Bun-first preference; bun and bunx work too.",
   "engines": { "node": ">=18" },
   "scripts": {
