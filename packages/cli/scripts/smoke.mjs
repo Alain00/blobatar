@@ -63,11 +63,23 @@ check("batch from stdin", () => {
   return files;
 });
 
+check("both generations answer, and differently (real v1 alias)", () => {
+  // "sofia" moved bands between generations; "alain" landed in a silhouette
+  // gen2 preserves byte-for-byte (ADR-0008), so it cannot tell the two apart.
+  const one = cli(["sofia", "--gen", "1"]);
+  const two = cli(["sofia", "--gen", "2"]);
+  assert(one.status === 0, `gen 1 exit ${one.status}: ${one.stderr}`);
+  assert(two.status === 0, `gen 2 exit ${two.status}: ${two.stderr}`);
+  assert(!one.stdout.equals(two.stdout), "gen 1 and gen 2 rendered identical markup");
+  assert(one.stdout.equals(cli(["sofia", "--gen", "1"]).stdout), "gen 1 not deterministic");
+  return "gen 1 ≠ gen 2, both stable";
+});
+
 check("errors exit 1, stderr only", () => {
   const r = cli(["alain", "--hue", "999"]);
   assert(r.status === 1, `exit ${r.status}`);
   assert(r.stdout.length === 0, "stdout was not empty");
-  assert(String(r.stderr).includes("hue must be an integer"), `stderr: ${r.stderr}`);
+  assert(String(r.stderr).includes("hue must be between 0 and 360"), `stderr: ${r.stderr}`);
 });
 
 process.exit(failed ? 1 : 0);

@@ -7,9 +7,28 @@
  * because the published artifact's audience is npx. A deliberate, documented
  * exception to the repo's Bun-first preference.
  */
-import type { BlobatarOptions } from "blobatar";
 import { normalizeSeed } from "blobatar";
-import { PNG_DEFAULT_SIZE, parseParams, type ParamName, type RawParams } from "render-core";
+import {
+  BadRequest,
+  parseOptions,
+  type Generation,
+  type UrlOptions,
+} from "render-core";
+
+/**
+ * What a render receives: the URL-spellable options, plus the one option the
+ * terminal adds. `normalize` is deliberately not in the shared table — a URL
+ * always normalizes, and the flag exists for local, case-sensitive ids — so it
+ * joins here, in the transport, after the table has spoken.
+ */
+export type RenderOptions = UrlOptions & { normalize?: boolean };
+
+/**
+ * The PNG raster width when the caller names none. The table has no size
+ * default — an omitted `size` leaves SVG markup that scales via CSS — but a
+ * raster has to pick a number.
+ */
+const PNG_DEFAULT_SIZE = 256;
 
 export interface CliIO {
   /** argv after the runtime and script entries. */
@@ -24,8 +43,8 @@ export interface CliIO {
 }
 
 export interface CliDeps {
-  /** `blobatar()` — the CLI treats its output as opaque bytes. */
-  render(name: string, options: BlobatarOptions): string;
+  /** `blobatar()` from the pinned generation's package — opaque bytes here. */
+  render(name: string, options: RenderOptions, generation: Generation): string;
   /** SVG markup to PNG bytes at a pixel width. */
   rasterize(svg: string, size: number): Promise<Uint8Array>;
   /** The package version, for `--version`. */
@@ -39,11 +58,14 @@ export const USAGE = `Usage:
   blobatar --stdin -d ./blobatars/         batch: one name per line on stdin
 
 Options:
-  --size <n>          16-1024. PNG: raster width (default 256). SVG: width/height attributes
+  --size <n>          8-1024, clamped. PNG: raster width (default 256). SVG: width/height attributes
   --background <v>    squircle | circle | square | none (default none, transparent)
   --hue <n>           lock the hue, degrees 0-360
-  --tone <n>          lock the tone, 0-100
-  --expression <v>    happy | sad | mad | idle
+  --tone <n>          lock the tone, 0-1 across the swatch set
+  --expression <v>    idle | happy | sad | mad | surprised | wink | sleepy |
+                      smug | unsure | scared | love | shy | sick | thinking
+  --gen <n>           pin a generation, 1 or 2 (default 2)
+  --title <text>      accessible name carried in the markup
   --no-normalize      keep the name's case/spacing (for case-sensitive ids)
   -o, --out <file>    write one blobatar to <file> (.svg or .png)
   -d, --dir <dir>     batch only: directory for one file per name
@@ -53,18 +75,25 @@ Options:
   --version           print the version
 `;
 
-/** Flags that carry one of the six shared params, straight into render-core. */
-const PARAM_FLAGS: Record<string, ParamName> = {
+/**
+ * Flags that carry one of the endpoint's URL params, spelled straight into the
+ * shared table. A flag here and a query key there are the same word on
+ * purpose: \`--tone 0.4\` and \`?tone=0.4\` must be one sentence.
+ */
+const PARAM_FLAGS: Record<string, string> = {
   "--size": "size",
   "--background": "background",
   "--hue": "hue",
   "--tone": "tone",
   "--expression": "expression",
+  "--gen": "gen",
+  "--title": "title",
 };
 
 interface Parsed {
   name?: string;
-  raw: RawParams;
+  raw: URLSearchParams;
+  noNormalize: boolean;
   out?: string;
   dir?: string;
   stdin: boolean;
@@ -75,7 +104,13 @@ interface Parsed {
 
 /** argv to a plain description of what was asked — no validation beyond shape. */
 function parseArgv(argv: string[]): Parsed | { error: string } {
-  const parsed: Parsed = { raw: {}, stdin: false, help: false, version: false };
+  const parsed: Parsed = {
+    raw: new URLSearchParams(),
+    noNormalize: false,
+    stdin: false,
+    help: false,
+    version: false,
+  };
   const take = (flag: string, inline: string | undefined, rest: string[]) => {
     if (inline !== undefined) return inline;
     const value = rest.shift();
@@ -108,11 +143,12 @@ function parseArgv(argv: string[]): Parsed | { error: string } {
     if (flag === "-h" || flag === "--help") parsed.help = true;
     else if (flag === "--version") parsed.version = true;
     else if (flag === "--stdin") parsed.stdin = true;
-    else if (flag === "--no-normalize") parsed.raw.normalize = "false";
-    else if (flag in PARAM_FLAGS) {
+    else if (flag === "--no-normalize") parsed.noNormalize = true;
+    else if (Object.hasOwn(PARAM_FLAGS, flag)) {
       const value = take(flag, inline, rest);
       if (typeof value !== "string") return value;
-      parsed.raw[PARAM_FLAGS[flag]!] = value;
+      // `set`, not `append`: the last spelling of a repeated flag wins.
+      parsed.raw.set(PARAM_FLAGS[flag]!, value);
     } else if (flag === "-o" || flag === "--out" || flag === "-d" || flag === "--dir" || flag === "--format") {
       const value = take(flag, inline, rest);
       if (typeof value !== "string") return value;
@@ -148,9 +184,19 @@ export async function run(io: CliIO, deps: CliDeps): Promise<0 | 1> {
     return 0;
   }
 
-  const params = parseParams(parsed.raw);
-  if (!params.ok) return fail(params.error);
-  const options = params.options;
+  // The same call the endpoint makes on a query string — same values, same
+  // ranges, same error text, whichever surface the caller typed into.
+  let request;
+  try {
+    request = parseOptions(parsed.raw);
+  } catch (e) {
+    if (e instanceof BadRequest) return fail(e.message);
+    throw e;
+  }
+  const { generation } = request;
+  const options: RenderOptions = parsed.noNormalize
+    ? { ...request.options, normalize: false }
+    : request.options;
 
   if (parsed.out !== undefined && parsed.dir !== undefined)
     return fail("-o and -d are mutually exclusive");
@@ -201,7 +247,10 @@ export async function run(io: CliIO, deps: CliDeps): Promise<0 | 1> {
     await io.mkdir(dir);
     for (const { file, owners } of byFile.values()) {
       const name = owners[0]!;
-      const data = format === "svg" ? deps.render(name, options) : await png(deps, name, options);
+      const data =
+        format === "svg"
+          ? deps.render(name, options, generation)
+          : await png(deps, name, options, generation);
       await io.writeFile(dir.endsWith("/") ? `${dir}${file}` : `${dir}/${file}`, data);
     }
     return 0;
@@ -228,16 +277,24 @@ export async function run(io: CliIO, deps: CliDeps): Promise<0 | 1> {
       return fail("PNG is binary — write it with -o <file>.png, or pipe stdout");
   }
 
-  const data = format === "svg" ? deps.render(name, options) : await png(deps, name, options);
+  const data =
+    format === "svg"
+      ? deps.render(name, options, generation)
+      : await png(deps, name, options, generation);
   if (out !== undefined) await io.writeFile(out, data);
   else io.writeStdout(data);
   return 0;
 }
 
 /** PNG bytes for one name: raster width from `size`, never markup attributes. */
-async function png(deps: CliDeps, name: string, options: BlobatarOptions): Promise<Uint8Array> {
+async function png(
+  deps: CliDeps,
+  name: string,
+  options: RenderOptions,
+  generation: Generation,
+): Promise<Uint8Array> {
   const { size, ...rest } = options;
-  return deps.rasterize(deps.render(name, rest), size ?? PNG_DEFAULT_SIZE);
+  return deps.rasterize(deps.render(name, rest, generation), size ?? PNG_DEFAULT_SIZE);
 }
 
 /**

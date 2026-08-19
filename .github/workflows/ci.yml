@@ -57,6 +57,11 @@ jobs:
       - name: Smoke the built package
         run: bun --filter blobatar smoke
 
+      # The other publishable: tests, bin build, and a smoke that spawns the
+      # built bin under Node against the real library and both generations.
+      - name: CLI checks
+        run: bun --filter blobatar-cli check
+
       - name: Pack
         run: npm pack --workspace blobatar --pack-destination /tmp
 
@@ -101,6 +106,12 @@ jobs:
 
       - name: Endpoint tests, against the built package
         run: bun --filter blobatar-api test
+
+      # The endpoint's param table lives in `packages/render-core` now, so its
+      # suite no longer rides inside the endpoint filter above. It resolves the
+      # library the same unaliased way, so it also needs the dist built first.
+      - name: Param-table tests, against the built package
+        run: bun --filter render-core test
 
       # Bundles `blobatar` the way a deploy does: through the workspace symlink
       # and therefore through the real `exports` map, not the tsconfig alias to

@@ -2,7 +2,8 @@
  * The whole flag/output/batch matrix, in-process through the injected process
  * seam (argv, stdin, stdout-TTY-ness, file writes). One end-to-end smoke
  * (`scripts/smoke.mjs`) spawns the built bin under node; param-table
- * correctness (values, ranges, messages) is render-core's suite.
+ * correctness (values, ranges, messages) is render-core's suite — what is
+ * asserted here is that flags reach that table and its answers reach the user.
  */
 import { describe, expect, test } from "bun:test";
 
@@ -23,7 +24,8 @@ function cli(argv: string[], opts: { tty?: boolean; stdin?: string } = {}) {
     mkdir: async (dir) => void dirs.push(dir),
   };
   const deps: CliDeps = {
-    render: (name, options) => `<svg>${name}|${JSON.stringify(options)}</svg>`,
+    render: (name, options, generation) =>
+      `<svg>${name}|g${generation}|${JSON.stringify(options)}</svg>`,
     rasterize: async (svg, size) => new TextEncoder().encode(`png@${size}|${svg}`),
     version: "0.0.0-test",
   };
@@ -34,34 +36,102 @@ const text = (chunks: (Uint8Array | string)[]) =>
   chunks.map((c) => (typeof c === "string" ? c : new TextDecoder().decode(c))).join("");
 
 describe("single blobatar", () => {
-  test("a name alone writes SVG to stdout", async () => {
+  test("a name alone writes SVG to stdout, rendered by the default generation", async () => {
     const c = cli(["alain"]);
     expect(await c.run()).toBe(0);
-    expect(text(c.out)).toBe("<svg>alain|{}</svg>");
+    expect(text(c.out)).toBe("<svg>alain|g2|{}</svg>");
     expect(c.err).toEqual([]);
     expect(c.files.size).toBe(0);
   });
 
-  test("flags mirror /v1 into the same options", async () => {
+  test("flags mirror the endpoint's URL params into the same options", async () => {
     const c = cli([
       "alain",
       "--background", "circle",
       "--hue", "210",
-      "--tone", "40",
+      "--tone", "0.4",
       "--expression", "happy",
       "--size", "512",
+      "--title", "Alain",
       "--no-normalize",
     ]);
     expect(await c.run()).toBe(0);
-    const options = JSON.parse(text(c.out).split("|")[1]!.replace("</svg>", ""));
+    const options = JSON.parse(text(c.out).split("|")[2]!.replace("</svg>", ""));
     expect(options).toMatchObject({
       background: "circle",
       hue: 210,
       tone: 0.4,
       size: 512,
+      title: "Alain",
       normalize: false,
     });
     expect(options.expression).toBeDefined();
+  });
+
+  test("--gen pins the generation the renderer receives", async () => {
+    const one = cli(["alain", "--gen", "1"]);
+    expect(await one.run()).toBe(0);
+    expect(text(one.out)).toBe("<svg>alain|g1|{}</svg>");
+    const two = cli(["alain", "--gen", "2"]);
+    expect(await two.run()).toBe(0);
+    expect(text(two.out)).toBe("<svg>alain|g2|{}</svg>");
+  });
+
+  test("an unknown generation fails with the table's roster", async () => {
+    const c = cli(["alain", "--gen", "3"]);
+    expect(await c.run()).toBe(1);
+    expect(c.err.join("")).toContain('unknown gen "3" — expected one of 1, 2');
+  });
+
+  test("the full expression roster is spellable, not the old four", async () => {
+    for (const pose of ["smug", "thinking", "wink", "scared"]) {
+      const c = cli(["alain", "--expression", pose]);
+      expect(await c.run()).toBe(0);
+    }
+    const typo = cli(["alain", "--expression", "smugg"]);
+    expect(await typo.run()).toBe(1);
+    expect(typo.err.join("")).toContain('unknown expression "smugg"');
+    expect(typo.err.join("")).toContain("thinking");
+  });
+
+  test("tone speaks the glossary's 0–1, and an exact 1 stays in the last swatch", async () => {
+    // The table clamps just inside the half-open top bucket — see render-core.
+    const c = cli(["alain", "--tone", "1"]);
+    expect(await c.run()).toBe(0);
+    expect(text(c.out)).toContain('"tone":0.999999');
+    // The old 0–100 dialect is gone: 40 is now out of range, loudly.
+    const old = cli(["alain", "--tone", "40"]);
+    expect(await old.run()).toBe(1);
+    expect(old.err.join("")).toContain("tone must be between 0 and 1, got 40");
+  });
+
+  test("size clamps like the endpoint clamps, and non-numbers are dropped", async () => {
+    const big = cli(["alain", "--size", "2048"]);
+    expect(await big.run()).toBe(0);
+    expect(text(big.out)).toContain('"size":1024');
+    const small = cli(["alain", "--size", "4"]);
+    expect(await small.run()).toBe(0);
+    expect(text(small.out)).toContain('"size":8');
+    // The endpoint ignores an unparseable size rather than erroring; the same
+    // table gives the CLI the same answer.
+    const junk = cli(["alain", "--size", "abc"]);
+    expect(await junk.run()).toBe(0);
+    expect(text(junk.out)).toBe("<svg>alain|g2|{}</svg>");
+  });
+
+  test("hue is a number, not digits — floats fine, bounds enforced", async () => {
+    const c = cli(["alain", "--hue", "210.5"]);
+    expect(await c.run()).toBe(0);
+    expect(text(c.out)).toContain('"hue":210.5');
+    const over = cli(["alain", "--hue", "999"]);
+    expect(await over.run()).toBe(1);
+    expect(over.err.join("")).toContain("hue must be between 0 and 360, got 999");
+  });
+
+  test("--title is capped by the table", async () => {
+    const c = cli(["alain", "--title", "a".repeat(129)]);
+    expect(await c.run()).toBe(1);
+    expect(c.err.join("")).toContain("title must be 128 characters or fewer");
   });
 
   test("--flag=value works like --flag value", async () => {
@@ -70,13 +140,11 @@ describe("single blobatar", () => {
     expect(text(c.out)).toContain('"hue":210');
   });
 
-  test("an invalid value fails with render-core's message, stdout untouched", async () => {
+  test("an invalid value fails with the table's message, stdout untouched", async () => {
     const c = cli(["alain", "--hue", "999"]);
     expect(await c.run()).toBe(1);
     expect(c.out).toEqual([]);
-    expect(text(c.err as unknown as string[])).toContain(
-      "hue must be an integer between 0 and 360",
-    );
+    expect(text(c.err as unknown as string[])).toContain("hue must be between 0 and 360");
   });
 
   test("a value-taking flag with nothing after it fails", async () => {
@@ -94,11 +162,11 @@ describe("single blobatar", () => {
   test("-- ends option parsing, so hyphen-led names render", async () => {
     const c = cli(["--", "-bot"]);
     expect(await c.run()).toBe(0);
-    expect(text(c.out)).toBe("<svg>-bot|{}</svg>");
+    expect(text(c.out)).toBe("<svg>-bot|g2|{}</svg>");
     // Flags before the marker still work.
     const d = cli(["--hue", "210", "--", "--stdin"]);
     expect(await d.run()).toBe(0);
-    expect(text(d.out)).toBe('<svg>--stdin|{"hue":210}</svg>');
+    expect(text(d.out)).toBe('<svg>--stdin|g2|{"hue":210}</svg>');
   });
 });
 
@@ -107,19 +175,19 @@ describe("-o", () => {
     const c = cli(["alain", "-o", "alain.svg"]);
     expect(await c.run()).toBe(0);
     expect(c.out).toEqual([]);
-    expect(c.files.get("alain.svg")).toBe("<svg>alain|{}</svg>");
+    expect(c.files.get("alain.svg")).toBe("<svg>alain|g2|{}</svg>");
   });
 
   test("the .png extension rasterizes at 256 by default, size never in markup", async () => {
     const c = cli(["alain", "-o", "alain.png"]);
     expect(await c.run()).toBe(0);
-    expect(text([c.files.get("alain.png")!])).toBe("png@256|<svg>alain|{}</svg>");
+    expect(text([c.files.get("alain.png")!])).toBe("png@256|<svg>alain|g2|{}</svg>");
   });
 
   test("--size sets the PNG raster width", async () => {
     const c = cli(["alain", "-o", "alain.png", "--size", "512"]);
     expect(await c.run()).toBe(0);
-    expect(text([c.files.get("alain.png")!])).toBe("png@512|<svg>alain|{}</svg>");
+    expect(text([c.files.get("alain.png")!])).toBe("png@512|<svg>alain|g2|{}</svg>");
   });
 
   test("any other extension is an error", async () => {
@@ -154,13 +222,13 @@ describe("PNG on stdout", () => {
   test("flows into a pipe with --format png", async () => {
     const c = cli(["alain", "--format", "png"], { tty: false });
     expect(await c.run()).toBe(0);
-    expect(text(c.out)).toBe("png@256|<svg>alain|{}</svg>");
+    expect(text(c.out)).toBe("png@256|<svg>alain|g2|{}</svg>");
   });
 
   test("SVG is fine on a TTY", async () => {
     const c = cli(["alain"], { tty: true });
     expect(await c.run()).toBe(0);
-    expect(text(c.out)).toBe("<svg>alain|{}</svg>");
+    expect(text(c.out)).toBe("<svg>alain|g2|{}</svg>");
   });
 });
 
@@ -192,7 +260,7 @@ describe("batch", () => {
       "blobatars/bot-7.svg",
       "blobatars/sofia.svg",
     ]);
-    expect(c.files.get("blobatars/alain.svg")).toBe("<svg>alain|{}</svg>");
+    expect(c.files.get("blobatars/alain.svg")).toBe("<svg>alain|g2|{}</svg>");
     expect(c.out).toEqual([]);
   });
 
@@ -201,7 +269,14 @@ describe("batch", () => {
       stdin: "alain\n",
     });
     expect(await c.run()).toBe(0);
-    expect(text([c.files.get("out/alain.png")!])).toBe("png@64|<svg>alain|{}</svg>");
+    expect(text([c.files.get("out/alain.png")!])).toBe("png@64|<svg>alain|g2|{}</svg>");
+  });
+
+  test("--gen carries into every render of the batch", async () => {
+    const c = cli(["--stdin", "-d", "out", "--gen", "1"], { stdin: "alain\nsofia\n" });
+    expect(await c.run()).toBe(0);
+    expect(c.files.get("out/alain.svg")).toBe("<svg>alain|g1|{}</svg>");
+    expect(c.files.get("out/sofia.svg")).toBe("<svg>sofia|g1|{}</svg>");
   });
 
   test("filenames are the sanitized identity the render will hash", async () => {

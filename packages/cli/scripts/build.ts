@@ -1,8 +1,9 @@
 /**
  * Builds the published bin: one plain-JS ESM file with the private
  * `render-core` inlined (it is never published, so it cannot stay an import)
- * and the two real runtime dependencies — `blobatar` and `@resvg/resvg-js` —
- * left external, to be resolved from the consumer's node_modules.
+ * and the three real runtime dependencies — `blobatar`, its frozen-v1 alias
+ * `blobatar-v1`, and `@resvg/resvg-js` — left external, to be resolved from
+ * the consumer's node_modules.
  */
 import { chmod } from "node:fs/promises";
 
@@ -12,7 +13,7 @@ const result = await Bun.build({
   target: "node",
   format: "esm",
   naming: "blobatar.mjs",
-  external: ["blobatar", "blobatar/*", "@resvg/resvg-js"],
+  external: ["blobatar", "blobatar/*", "blobatar-v1", "blobatar-v1/*", "@resvg/resvg-js"],
   banner: "#!/usr/bin/env node",
 });
 
