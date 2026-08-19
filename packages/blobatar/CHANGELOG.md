@@ -12,6 +12,17 @@ one: `blobatar@1` renders gen1, `blobatar@2` renders gen2. See
 [ADR-0006](../../docs/adr/0006-generations.md) and
 [ADR-0008](../../docs/adr/0008-package-majors-select-generations.md).
 
+## Unreleased
+
+**No blobatar changes.** This editor-only change does not touch the seed → look
+mapping or any published package entry point.
+
+### Added
+
+- The editor can download the current configured blobatar as a static SVG or a
+  512 × 512 PNG. Motion remains preview-only; both formats export the held
+  static render.
+
 ## 2.1.0
 
 **No blobatar changes.** Nothing here touches the seed → look mapping: the

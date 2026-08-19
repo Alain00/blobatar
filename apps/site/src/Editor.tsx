@@ -22,6 +22,7 @@ import { blobLayout, resolved } from "@/editor/resolved";
 import { snippet, type Api, type Motion } from "@/editor/snippet";
 import { NAMES } from "@/names";
 import { cn } from "@/lib/utils";
+import DownloadMenu from "@/components/editor/download";
 
 /**
  * The editor.
@@ -396,7 +397,7 @@ function Preview({
           className="size-[min(15rem,34vmin,28vh)]"
         />
       )}
-
+      <DownloadMenu name={name || ""} traits={pinned} motion={motion} />
       {/*
         Between the blobatar and the controls, because it belongs to the first
         of those: it is the same preview asked of seven other names, not a
