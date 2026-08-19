@@ -209,7 +209,8 @@ consumer and is not gated at all. A blobatar can be sad and still breathing.
 **Package**:
 A workspace member under `packages/` — publishable. `render-core` is the
 deliberate exception: a private support package, never published, bundled into
-the surfaces that consume it.
+the surfaces that consume it. Deciding that category is ADR-0009's job, not
+this entry's; here it is only named.
 
 **App**:
 A workspace member under `apps/` — never published, and always consumes
@@ -228,6 +229,20 @@ imports it rather than copying it, so there is one endpoint with two deployments
 when that default changes; an explicit supported `?gen=` names an immutable
 generation. Unknown generations are rejected.
 _Avoid_: server, API, image service.
+
+**CLI**:
+The terminal surface (`packages/cli`, published to npm as `blobatar-cli`) —
+`blobatar <name>` with flags. It and the Endpoint are the two string surfaces,
+and they speak one sentence: both parse through `render-core`'s single table,
+so a param carries the same name, range and error text in a query string and
+in argv. The asymmetries are transport-shaped, one per direction:
+`--no-normalize` exists only in the terminal (a URL always normalizes), and
+the Gravatar compatibility spellings (`s`, the accepted-and-ignored params)
+exist only in a URL. Renders locally through the library, never through
+the endpoint, and pins generations the same way (`--gen`, both majors
+bundled).
+_Avoid_: tool, command, client. It is not a client of the endpoint — nothing
+here talks to the network.
 
 **Tuning grid**:
 The internal design tool (`apps/demo`) that renders blobatars in aggregate so
