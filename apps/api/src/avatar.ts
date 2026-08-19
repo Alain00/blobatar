@@ -1,12 +1,16 @@
 import { blobatar as blobatar2 } from "blobatar/blob";
 import { blobatar as blobatar1 } from "blobatar-v1/blob";
+// By path rather than through node_modules, the same way the site's Worker
+// imports this file: `render-core` is private and never published, so there is
+// no installable name for the standalone clone the Deploy button makes — but
+// the file is in every clone, and both wrangler and bun bundle it from here.
 import {
   BadRequest,
   parseName,
   parseOptions,
   type Generation,
   type UrlOptions,
-} from "./params";
+} from "../../../packages/render-core/src";
 
 /**
  * What both generations can render.

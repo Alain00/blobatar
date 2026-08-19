@@ -1,205 +1,146 @@
-/**
- * The shared param table — the one place the `/v1` string vocabulary becomes
- * `BlobatarOptions`. Both the service and the CLI rely on this suite; neither
- * re-tests the table.
- */
-import { describe, expect, test } from "bun:test";
-import { happy, idle, mad, sad } from "blobatar/expression";
+import { expect, test } from "bun:test";
+import { happy } from "blobatar/expression";
+import { BadRequest, MAX_NAME, parseName, parseOptions } from "../src";
 
-import { parseParams } from "../src/index";
+const parsed = (qs: string) => parseOptions(new URLSearchParams(qs));
+const opts = (qs: string) => parsed(qs).options;
+const name = (p: string) => parseName(p, "/avatar/");
+const bad = (fn: () => unknown) => {
+  expect(fn).toThrow(BadRequest);
+  try {
+    fn();
+  } catch (e) {
+    return (e as Error).message;
+  }
+  throw new Error("unreachable");
+};
 
-describe("parseParams", () => {
-  test("no params is valid and sets nothing", () => {
-    const r = parseParams({});
-    expect(r).toEqual({ ok: true, options: {}, canonical: {} });
+test("no parameters selects gen2, with no renderer options", () => {
+  expect(parsed("")).toEqual({ generation: 2, options: {} });
+});
+
+test("gen explicitly selects either package major", () => {
+  expect(parsed("gen=1").generation).toBe(1);
+  expect(parsed("gen=2").generation).toBe(2);
+});
+
+test("parameters map onto the library's own names", () => {
+  expect(opts("size=64&hue=200&tone=0.25&title=Alain")).toEqual({
+    size: 64,
+    hue: 200,
+    tone: 0.25,
+    title: "Alain",
   });
+});
 
-  describe("size", () => {
-    test("accepts integers 16–1024", () => {
-      expect(parseParams({ size: "16" })).toEqual({
-        ok: true,
-        options: { size: 16 },
-        canonical: { size: "16" },
-      });
-      expect(parseParams({ size: "1024" })).toEqual({
-        ok: true,
-        options: { size: 1024 },
-        canonical: { size: "1024" },
-      });
-    });
+test("background=none is the falsy one, and survives being falsy", () => {
+  expect(opts("background=none")).toEqual({ background: false });
+  expect(opts("background=squircle")).toEqual({ background: "squircle" });
+});
 
-    test("canonicalizes leading zeros", () => {
-      expect(parseParams({ size: "0256" })).toEqual({
-        ok: true,
-        options: { size: 256 },
-        canonical: { size: "256" },
-      });
-    });
+test("expressions resolve to the library's values, not to strings", () => {
+  expect(opts("expression=happy").expression).toBe(happy);
+});
 
-    test("rejects out-of-range and non-integer values", () => {
-      const error = "size must be an integer between 16 and 1024";
-      for (const size of ["15", "1025", "0", "1.5", "-64", "+64", "64px", "1e2", "", " 64"]) {
-        expect(parseParams({ size })).toEqual({ ok: false, error });
-      }
-    });
-  });
+test("the roster is exactly the fourteen poses", () => {
+  const roster = ["idle", "happy", "sad", "mad", "surprised", "wink", "sleepy",
+    "smug", "unsure", "scared", "love", "shy", "sick", "thinking"];
+  for (const pose of roster) expect(opts(`expression=${pose}`).expression).toBeDefined();
+  // The expression module also exports its machinery; none of it is a pose.
+  bad(() => opts("expression=poseVars"));
+  bad(() => opts("expression=bakePose"));
+});
 
-  describe("background", () => {
-    test("passes shapes through and maps none to false", () => {
-      for (const shape of ["squircle", "circle", "square"] as const) {
-        expect(parseParams({ background: shape })).toEqual({
-          ok: true,
-          options: { background: shape },
-          canonical: { background: shape },
-        });
-      }
-      expect(parseParams({ background: "none" })).toEqual({
-        ok: true,
-        options: { background: false },
-        canonical: { background: "none" },
-      });
-    });
+test("an undocumented parameter is an error, not a silent drop", () => {
+  // The failure this exists for: a typo renders a valid blobatar wearing the
+  // wrong face, and the caller has nothing to notice.
+  expect(bad(() => opts("expresion=happy"))).toContain("unknown parameter");
+  bad(() => opts("utm_source=x"));
+});
 
-    test("rejects anything else, case-sensitively", () => {
-      const error = "background must be one of: squircle, circle, square, none";
-      for (const background of ["Circle", "SQUARE", "rounded", "true", "false", ""]) {
-        expect(parseParams({ background })).toEqual({ ok: false, error });
-      }
-    });
-  });
+test("size clamps where everything else validates", () => {
+  // The one parameter that cannot make the answer wrong — only the wrong scale,
+  // which CSS can fix. Also what keeps Gravatar's s=2048 from 400ing.
+  expect(opts("size=64").size).toBe(64);
+  expect(opts("size=2048").size).toBe(1024);
+  expect(opts("size=1").size).toBe(8);
+  expect(opts("size=32.6").size).toBe(33);
+  // Blank is ignored rather than clamped: `Number("")` is 0, which would
+  // otherwise serve an 8px avatar in answer to an empty parameter.
+  expect(opts("size=").size).toBeUndefined();
+  expect(opts("size=abc").size).toBeUndefined();
+});
 
-  describe("hue", () => {
-    test("accepts integer degrees 0–360", () => {
-      expect(parseParams({ hue: "0" })).toEqual({
-        ok: true,
-        options: { hue: 0 },
-        canonical: { hue: "0" },
-      });
-      expect(parseParams({ hue: "360" })).toEqual({
-        ok: true,
-        options: { hue: 360 },
-        canonical: { hue: "360" },
-      });
-    });
+test("s is Gravatar's spelling of size, and wins when both appear", () => {
+  expect(opts("s=64").size).toBe(64);
+  expect(opts("s=64&size=256").size).toBe(64);
+});
 
-    test("rejects floats and out-of-range degrees", () => {
-      const error = "hue must be an integer between 0 and 360";
-      for (const hue of ["361", "-1", "210.5", "12deg", ""]) {
-        expect(parseParams({ hue })).toEqual({ ok: false, error });
-      }
-    });
-  });
+test("the other numeric bounds are inclusive and enforced", () => {
+  // A full turn lands on 360 and callers compute into hue.
+  expect(opts("hue=360").hue).toBe(360);
+  expect(opts("hue=0").hue).toBe(0);
+  expect(opts("tone=0").tone).toBe(0);
+  bad(() => opts("tone=1.1"));
+  bad(() => opts("hue=361"));
+  bad(() => opts("hue=abc"));
+});
 
-  describe("tone", () => {
-    test("maps integers 0–100 to the library's 0–1 position", () => {
-      expect(parseParams({ tone: "0" })).toEqual({
-        ok: true,
-        options: { tone: 0 },
-        canonical: { tone: "0" },
-      });
-      expect(parseParams({ tone: "40" })).toEqual({
-        ok: true,
-        options: { tone: 0.4 },
-        canonical: { tone: "40" },
-      });
-    });
+test("tone=1 lands in the last swatch, not back in the first", () => {
+  // The library's tone buckets are half-open (`v < edge`), so an exact 1
+  // matches nothing and falls back to the first swatch — tone=1 rendering
+  // byte-identically to tone=0. The table clamps just inside the top edge so
+  // the documented 0–1 range ends where a caller expects: in ink, not pastel.
+  expect(opts("tone=1").tone).toBe(0.999999);
+  expect(opts("tone=0.999").tone).toBe(0.999);
+});
 
-    test("100 lands just under 1 — the tone range is half-open", () => {
-      // The library buckets tone with `v < edge` and the last edge is 1.0, so
-      // an exact 1 falls through and wraps to the FIRST swatch: tone=100 would
-      // render the same bytes as tone=0. Verified empirically. The clamp value
-      // is the library's own (traits.ts uses 0.999999 for overrides).
-      expect(parseParams({ tone: "100" })).toEqual({
-        ok: true,
-        options: { tone: 0.999999 },
-        canonical: { tone: "100" },
-      });
-    });
+test("inherited object keys are not expressions, backgrounds or generations", () => {
+  // A plain object answers `in` truthily for its prototype's keys, and
+  // `EXPRESSIONS["constructor"]` is a function, not a pose — without an
+  // own-property check a crafted URL turns a 400 into a downstream crash.
+  for (const key of ["__proto__", "constructor", "toString", "hasOwnProperty"]) {
+    bad(() => opts(`expression=${key}`));
+    bad(() => opts(`background=${key}`));
+    bad(() => opts(`gen=${key}`));
+  }
+});
 
-    test("rejects out-of-range and non-integer values", () => {
-      const error = "tone must be an integer between 0 and 100";
-      for (const tone of ["101", "-5", "0.4", ""]) {
-        expect(parseParams({ tone })).toEqual({ ok: false, error });
-      }
-    });
-  });
+test("title is capped", () => {
+  expect(opts(`title=${"a".repeat(128)}`).title).toHaveLength(128);
+  bad(() => opts(`title=${"a".repeat(129)}`));
+});
 
-  describe("expression", () => {
-    test("resolves names to the values the library exports", () => {
-      // Identity, not shape: the glossary's "an expression is a value a
-      // consumer imports, not a name it spells", translated to strings here
-      // and nowhere else.
-      const roster = { happy, sad, mad, idle };
-      for (const [name, value] of Object.entries(roster)) {
-        const r = parseParams({ expression: name });
-        if (!r.ok) throw new Error(r.error);
-        expect(r.options.expression).toBe(value);
-        expect(r.canonical.expression).toBe(name);
-      }
-    });
+test("names come off the path under the prefix", () => {
+  expect(name("/avatar/alain00")).toBe("alain00");
+  expect(name("/avatar/alain%40example.com")).toBe("alain@example.com");
+  expect(name("/avatar/%F0%9F%A6%8A")).toBe("🦊");
+});
 
-    test("rejects anything off the roster", () => {
-      const error = "expression must be one of: happy, sad, mad, idle";
-      for (const expression of ["angry", "Happy", "wink", ""]) {
-        expect(parseParams({ expression })).toEqual({ ok: false, error });
-      }
-    });
+test("image extensions are accepted and discarded", () => {
+  for (const ext of [".svg", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".PNG"]) {
+    expect(name(`/avatar/alain${ext}`)).toBe("alain");
+  }
+});
 
-    test("rejects prototype keys — a 400, never a downstream crash", () => {
-      // A plain-object roster answers truthily to "__proto__" and friends;
-      // whatever comes back is not an Expression and would 500 in the render.
-      const error = "expression must be one of: happy, sad, mad, idle";
-      for (const expression of ["__proto__", "constructor", "toString", "hasOwnProperty"]) {
-        expect(parseParams({ expression })).toEqual({ ok: false, error });
-      }
-    });
-  });
+test("a name that is itself an extension still works", () => {
+  expect(name("/avatar/.svg.svg")).toBe(".svg");
+});
 
-  describe("normalize", () => {
-    test("accepts the literals true and false", () => {
-      expect(parseParams({ normalize: "true" })).toEqual({
-        ok: true,
-        options: { normalize: true },
-        canonical: { normalize: "true" },
-      });
-      expect(parseParams({ normalize: "false" })).toEqual({
-        ok: true,
-        options: { normalize: false },
-        canonical: { normalize: "false" },
-      });
-    });
+test("the path is one segment under the prefix", () => {
+  expect(bad(() => name("/avatar/a/b"))).toContain("%2F");
+  bad(() => name("/avatar/"));
+  bad(() => name("/avatar/.svg"));
+});
 
-    test("rejects everything else", () => {
-      const error = "normalize must be true or false";
-      for (const normalize of ["1", "0", "yes", "True", ""]) {
-        expect(parseParams({ normalize })).toEqual({ ok: false, error });
-      }
-    });
-  });
+test("malformed encoding is the caller's error, not a 500", () => {
+  expect(bad(() => name("/avatar/%"))).toContain("percent-encoding");
+});
 
-  test("params combine, and the first invalid one wins in allowlist order", () => {
-    const r = parseParams({
-      size: "512",
-      background: "circle",
-      hue: "210",
-      tone: "40",
-      expression: "happy",
-      normalize: "false",
-    });
-    if (!r.ok) throw new Error(r.error);
-    expect(r.options).toEqual({
-      size: 512,
-      background: "circle",
-      hue: 210,
-      tone: 0.4,
-      expression: happy,
-      normalize: false,
-    });
-    // Two invalid params, one deterministic message: allowlist order decides
-    // (`hue` sorts before `size`).
-    expect(parseParams({ size: "bad", hue: "bad" })).toEqual({
-      ok: false,
-      error: "hue must be an integer between 0 and 360",
-    });
-  });
+test("the name cap is measured after decoding", () => {
+  // An emoji is one character but nine bytes encoded; capping the encoded form
+  // would reject a name well inside the limit.
+  const emoji = "🦊".repeat(100);
+  expect(name(`/avatar/${encodeURIComponent(emoji)}`)).toHaveLength(200);
+  bad(() => name(`/avatar/${"a".repeat(MAX_NAME + 1)}`));
 });

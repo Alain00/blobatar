@@ -9,7 +9,8 @@
  * Two rules keep it honest, and both are load-bearing rather than decorative:
  *
  * 1. **The blobatar is rendered from the URL, by the endpoint's own parser.**
- *    `render` below runs `parseName`/`parseOptions` out of `apps/api` and hands
+ *    `render` below runs `parseName`/`parseOptions` out of the shared table in
+ *    `packages/render-core` — the same functions the Worker calls — and hands
  *    the result to `blobatar()`. The markup on screen is byte-for-byte the
  *    response body, so a frame cannot show a face the URL does not produce —
  *    including the ones nobody would think to fake, like `?s=2` clamping up to
@@ -24,8 +25,9 @@
  */
 
 import { blobatar } from "blobatar/blob";
-import { parseName, parseOptions } from "../../api/src/params";
+import { parseName, parseOptions } from "../../../packages/render-core/src";
 import { PREFIX } from "../../api/src/avatar";
+
 import { FPS, HEIGHT, WIDTH } from "./timeline";
 
 export { FPS, HEIGHT, WIDTH } from "./timeline";

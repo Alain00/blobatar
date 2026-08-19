@@ -63,7 +63,8 @@ what anyone pressing the button will run.
 
 ## Relationship to `apps/site`
 
-`avatar.ts` and `params.ts` here are the endpoint, and `apps/site` imports them
+`avatar.ts` here is the endpoint — its param table lives in
+`packages/render-core`, shared with the CLI — and `apps/site` imports it
 rather than holding a copy: blobatar.dev serves this Worker with the landing
 page attached, and `run_worker_first` scopes it to `/avatar/*` there. The two
 deployments differ only in what happens off that path — the site, or the help
