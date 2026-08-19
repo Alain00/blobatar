@@ -12,12 +12,14 @@
   },
   "dependencies": {
     "@radix-ui/react-popover": "^1.1.23",
+    "@radix-ui/react-select": "^2.3.7",
     "@radix-ui/react-slider": "^1.4.7",
     "@radix-ui/react-toggle-group": "^1.1.2",
     "blobatar": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "geist": "^1.3.1",
+    "lucide-react": "^1.33.0",
     "react": "^19",
     "react-dom": "^19",
     "tailwind-merge": "^3.0.1"

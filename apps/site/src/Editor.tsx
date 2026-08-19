@@ -4,6 +4,13 @@ import { traits as reader, type TraitOverrides } from "blobatar";
 import { Control } from "@/components/editor/control";
 import { ShapePicker, TonePicker } from "@/components/editor/pickers";
 import { Segmented, SegmentedItem } from "@/components/ui/segmented";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Snippet } from "@/components/ui/snippet";
 import { Install } from "@/components/ui/install";
 import {
@@ -215,16 +222,20 @@ export function Editor() {
         >
           <div className="text-muted flex items-baseline justify-between gap-4 text-xs lowercase">
             <span>your config</span>
-            <Segmented
-              type="single"
-              value={api}
-              onValueChange={(v: string) => v && setApi(v as Api)}
-              aria-label="API"
-            >
-              <SegmentedItem value="react">react</SegmentedItem>
-              <SegmentedItem value="string">string</SegmentedItem>
-              <SegmentedItem value="http">http</SegmentedItem>
-            </Segmented>
+            <Select value={api} onValueChange={v => v && setApi(v as Api)}>
+              <SelectTrigger aria-label="API" className="w-auto">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="react">react</SelectItem>
+                <SelectItem value="vue">vue</SelectItem>
+                <SelectItem value="svelte">svelte</SelectItem>
+                <SelectItem value="solid">solid</SelectItem>
+                <SelectItem value="preact">preact</SelectItem>
+                <SelectItem value="string">string</SelectItem>
+                <SelectItem value="http">http</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/*

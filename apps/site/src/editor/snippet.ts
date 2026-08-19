@@ -12,7 +12,7 @@
 import type { TraitOverrides } from "blobatar";
 import { KEY_ORDER } from "./axes";
 
-export type Api = "react" | "string" | "http";
+export type Api = "http" | "react" | "vue" | "svelte" | "solid" | "preact" | "string";
 export type Motion = false | "hover" | "always";
 
 export interface SnippetInput {
@@ -85,11 +85,23 @@ export function snippet({ api, name, pinned, motion }: SnippetInput): string {
   const traits = entries(pinned);
   const seed = name || "blobatar";
 
-  return api === "react"
-    ? react(seed, traits, motion)
-    : api === "string"
-      ? string(seed, traits, motion)
-      : http(seed, traits, motion);
+  switch (api) {
+    case "http":
+      return http(seed, traits, motion);
+    case "react":
+      return react(seed, traits, motion);
+    case "vue":
+      return vue(seed, traits, motion);
+    case "svelte":
+      return svelte(seed, traits, motion);
+    case "solid":
+      return solid(seed, traits, motion);
+    case "preact":
+      return preact(seed, traits, motion);
+    case "string":
+    default:
+      return string(seed, traits, motion);
+  }
 }
 
 function react(
@@ -124,6 +136,142 @@ function react(
 
   if (motion) lines.push(`  animate="${motion}"`);
   lines.push(`/>;`);
+
+  return lines.join("\n");
+}
+
+function vue(
+  seed: string,
+  traits: (readonly [string, number | number[]])[],
+  motion: Motion,
+) {
+  const lines = [`<script setup>`, `import Blobatar from "blobatar/vue";`, `</script>`, ""];
+
+  if (motion)
+    lines.push(`<!-- animate renders inline SVG, not one <img> -->`);
+
+  if (traits.length) lines.push(nameNote);
+
+  lines.push(`<template>`);
+  lines.push(`  <Blobatar`);
+
+  if (traits.length === 1) {
+    const [k, v] = traits[0]!;
+    lines.push(`    name="${seed}"`);
+    lines.push(`    :traits="{ ${key(k)}: ${v} }"`);
+  } else if (traits.length) {
+    lines.push(`    name="${seed}"`);
+    lines.push(`    :traits="{`);
+    for (const [k, v] of traits) lines.push(`      ${key(k)}: ${v},`);
+    lines.push(`    }"`);
+  } else {
+    lines.push(`    name="${seed}"`);
+  }
+
+  if (motion) lines.push(`    animate="${motion}"`);
+  lines.push(`  />`);
+  lines.push(`</template>`);
+
+  return lines.join("\n");
+}
+
+function svelte(
+  seed: string,
+  traits: (readonly [string, number | number[]])[],
+  motion: Motion,
+) {
+  const lines = [`<script>`, `  import Blobatar from "blobatar/svelte";`, `</script>`, ""];
+
+  if (motion)
+    lines.push(`<!-- animate renders inline SVG, not one <img> -->`);
+
+  if (traits.length) lines.push(`<!-- ${nameNote} -->`);
+
+  if (traits.length === 1) {
+    const [k, v] = traits[0]!;
+    lines.push(`<Blobatar name="${seed}" traits={{ ${key(k)}: ${v} }}${motion ? ` animate="${motion}"` : ""} />`);
+  } else if (traits.length) {
+    lines.push(`<Blobatar`);
+    lines.push(`  name="${seed}"`);
+    lines.push(`  traits={{`);
+    for (const [k, v] of traits) lines.push(`    ${key(k)}: ${v},`);
+    lines.push(`  }}${motion ? `\n  animate="${motion}"` : ""}`);
+    lines.push(`/>`);
+  } else {
+    lines.push(`<Blobatar name="${seed}"${motion ? ` animate="${motion}"` : ""} />`);
+  }
+
+  return lines.join("\n");
+}
+
+function solid(
+  seed: string,
+  traits: (readonly [string, number | number[]])[],
+  motion: Motion,
+) {
+  const lines = [`import { Blobatar } from "blobatar/solid";`];
+
+  if (motion)
+    lines.push(
+      `import "blobatar/motion.css"; // animate renders inline SVG, not one <img>`,
+    );
+
+  lines.push("");
+  if (traits.length) lines.push(nameNote);
+
+  lines.push(`<Blobatar`);
+
+  if (traits.length === 1) {
+    const [k, v] = traits[0]!;
+    lines.push(`  name="${seed}"`);
+    lines.push(`  traits={{ ${key(k)}: ${v} }}`);
+  } else if (traits.length) {
+    lines.push(`  name="${seed}"`);
+    lines.push(`  traits={{`);
+    for (const [k, v] of traits) lines.push(`    ${key(k)}: ${v},`);
+    lines.push(`  }}`);
+  } else {
+    lines.push(`  name="${seed}"`);
+  }
+
+  if (motion) lines.push(`  animate="${motion}"`);
+  lines.push(`/>`);
+
+  return lines.join("\n");
+}
+
+function preact(
+  seed: string,
+  traits: (readonly [string, number | number[]])[],
+  motion: Motion,
+) {
+  const lines = [`import { Blobatar } from "blobatar/preact";`];
+
+  if (motion)
+    lines.push(
+      `import "blobatar/motion.css"; // animate renders inline SVG, not one <img>`,
+    );
+
+  lines.push("");
+  if (traits.length) lines.push(nameNote);
+
+  lines.push(`<Blobatar`);
+
+  if (traits.length === 1) {
+    const [k, v] = traits[0]!;
+    lines.push(`  name="${seed}"`);
+    lines.push(`  traits={{ ${key(k)}: ${v} }}`);
+  } else if (traits.length) {
+    lines.push(`  name="${seed}"`);
+    lines.push(`  traits={{`);
+    for (const [k, v] of traits) lines.push(`    ${key(k)}: ${v},`);
+    lines.push(`  }}`);
+  } else {
+    lines.push(`  name="${seed}"`);
+  }
+
+  if (motion) lines.push(`  animate="${motion}"`);
+  lines.push(`/>`);
 
   return lines.join("\n");
 }

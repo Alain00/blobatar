@@ -16,6 +16,19 @@
     "./expression": { "types": "./dist/expression.d.ts", "default": "./dist/expression.js" },
     "./react": { "types": "./dist/react.d.ts", "default": "./dist/react.js" },
     "./vue": { "types": "./dist/vue.d.ts", "default": "./dist/vue.js" },
+    "./svelte": {
+      "types": "./src/svelte/index.ts",
+      "svelte": "./src/svelte/index.ts",
+      "default": "./src/svelte/index.ts"
+    },
+    "./solid": {
+      "types": "./src/solid/index.ts",
+      "default": "./src/solid/index.ts"
+    },
+    "./preact": {
+      "types": "./src/preact/index.ts",
+      "default": "./src/preact/index.ts"
+    },
     "./motion.css": "./dist/motion.css",
     "./package.json": "./package.json"
   },
@@ -37,18 +50,24 @@
   },
   "peerDependencies": {
     "react": ">=18",
-    "vue": ">=3"
+    "vue": ">=3",
+    "preact": ">=10",
+    "solid-js": ">=1"
   },
   "peerDependenciesMeta": {
     "react": { "optional": true },
-    "vue": { "optional": true }
+    "vue": { "optional": true },
+    "preact": { "optional": true },
+    "solid-js": { "optional": true }
   },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "preact": "^10.29.8",
     "react": "^19",
     "react-dom": "^19",
+    "solid-js": "^1.9.15",
     "vue": "^3.5.0"
   },
   "keywords": ["blobatar", "avatar", "identicon", "svg", "deterministic", "no-dependencies"],

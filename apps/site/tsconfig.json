@@ -10,6 +10,10 @@
       "blobatar/uri": ["../../packages/blobatar/src/uri.ts"],
       "blobatar/expression": ["../../packages/blobatar/src/expression.ts"],
       "blobatar/react": ["../../packages/blobatar/src/react.tsx"],
+      "blobatar/vue": ["../../packages/blobatar/src/vue.ts"],
+      "blobatar/svelte": ["../../packages/blobatar/src/svelte/index.ts"],
+      "blobatar/solid": ["../../packages/blobatar/src/solid/index.ts"],
+      "blobatar/preact": ["../../packages/blobatar/src/preact/index.ts"],
       "blobatar/motion.css": ["../../packages/blobatar/src/motion.css"]
     }
   },
