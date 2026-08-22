@@ -32,6 +32,7 @@
     contrast,
     title,
     animate,
+    travel,
     expression,
     traits,
     class: className,
@@ -60,7 +61,9 @@
   // "hover" is the adapter answering a question the caller already answered,
   // and it would start silently rewriting the picture the moment `Animate`
   // gains a third member. See `CONTEXT.md`, "Adapter".
-  let parts = $derived(animate ? _parts(seed, { ...opts, animate }) : null);
+  let parts = $derived(
+    animate ? _parts(seed, { ...opts, animate, travel }) : null,
+  );
 
   // `rest` is the union of both modes' attributes, so it has to be narrowed to
   // the one whose element is about to be rendered before it can be spread. The

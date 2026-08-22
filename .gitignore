@@ -51,3 +51,4 @@ apps/site/*.html
 .dev.vars
 .dev.vars.*
 !.dev.vars.example
+.probe

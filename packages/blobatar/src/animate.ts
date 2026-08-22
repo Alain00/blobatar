@@ -11,6 +11,56 @@ import type { Traits } from "./traits";
 export type Animate = "hover" | "always";
 
 /**
+ * Whole-figure directional travel, as an idle-loop channel.
+ *
+ * Four cardinal directions named as they read on screen, plus `"seeded"`, which
+ * lets the name pick the direction — a uniform pick over the four, drawn from
+ * the `travel.dir` trait, so a grid of seeded blobatars walks every way at
+ * once instead of marching in formation.
+ *
+ **Honored by the framework adapters only**, exactly like `animate`: the string
+ * API returns static markup regardless, and the rationale is measured rather
+ * than aesthetic — see `BlobatarOptions.travel` in `src/render.ts`.
+ */
+export type Travel = "rtl" | "ltr" | "ttb" | "btt" | "seeded";
+
+const DIRECTIONS = ["ltr", "rtl", "ttb", "btt"] as const;
+
+/**
+ * Per-blobatar travel timing and direction, as custom properties.
+ *
+ * The same three decisions `motionVars` documents apply here unchanged: seeded
+ * offsets (a grid that sets off in unison reads as a heartbeat), negated phase
+ * at the source (a positive delay postpones rather than offsets), and
+ * string-addressed trait keys (adding `travel.*` cannot perturb any existing
+ * blobatar).
+ *
+ * The direction vector is emitted as its endpoint offset — one signed pair,
+ * `--mo-tx`/`--mo-ty` in viewBox units — rather than as an angle or a named
+ * direction for the stylesheet to decode. CSS picks the four directions apart
+ * by arithmetic, not by selectors, so one shared `@keyframes` serves all of
+ * them and no per-direction rule ever exists.
+ *
+ * The lean (`--mo-t-lean`) is a small seeded roll the figure holds *into* its
+ * direction of travel. It is capped well under the 12° static lean ceiling the
+ * wrap layer establishes (§4.7): lean carries identity, and travel decorates it
+ * rather than overwriting who the blobatar is.
+ */
+export function travelVars(t: Traits, travel?: Travel): Record<string, string> {
+  // An explicit direction wins; `"seeded"` (or nothing) lets the hash pick.
+  const dir = travel && travel !== "seeded" ? travel : t.pick("travel.dir", DIRECTIONS);
+  const dist = Math.round(t.num("travel.dist", 3, 9) * 100) / 100;
+  const period = Math.round(t.num("travel.period", 9000, 16000));
+  return {
+    "--mo-tx": `${dir === "ltr" ? dist : dir === "rtl" ? -dist : 0}px`,
+    "--mo-ty": `${dir === "ttb" ? dist : dir === "btt" ? -dist : 0}px`,
+    "--mo-t-period": `${period}ms`,
+    "--mo-t-phase": `${-Math.round(t.num("travel.phase", 0, period))}ms`,
+    "--mo-t-lean": `${Math.round(t.num("travel.lean", -2, 2) * 100) / 100}deg`,
+  };
+}
+
+/**
  * Root class. Amplitude, and therefore everything else, hangs off this.
  *
  * `mo-expr` marks "wearing a non-idle expression" and exists for exactly one

@@ -32,7 +32,7 @@
 import { serializeVars as serialize } from "./animate";
 
 export { _layout, _parts } from "./blobatar";
-export type { Animate, BlobatarOptions, Expression } from "./blobatar";
+export type { Animate, BlobatarOptions, Expression, Travel } from "./blobatar";
 export type { Palette } from "./color";
 export type { TraitOverrides, Traits } from "./traits";
 

@@ -4,6 +4,7 @@ import {
   traits,
   type Animate,
   type BlobatarOptions,
+  type Travel,
 } from "blobatar";
 import { layout } from "blobatar/blob";
 import {
@@ -105,6 +106,12 @@ const PAIRS: Record<string, Expression[]> = {
   "sleepy|thinking": [sleepy, thinking],
 };
 
+/**
+ * Travel directions, plus `""` for off. `seeded` lets each name pick its own
+ * direction, which is the setting a crowd is judged in.
+ */
+const TRAVELS = ["", "ltr", "rtl", "ttb", "btt", "seeded"] as const;
+
 type Bg = "default" | "squircle" | "circle" | "square" | "none";
 
 export function App() {
@@ -115,6 +122,7 @@ export function App() {
   const [hue, setHue] = useState<number | "">("");
   const [focus, setFocus] = useState<string | null>(null);
   const [animate, setAnimate] = useState<Animate | "">("");
+  const [travel, setTravel] = useState<Travel | "">("");
   const [slow, setSlow] = useState(false);
   const [expr, setExpr] = useState<keyof typeof EXPRESSIONS>("idle");
 
@@ -229,6 +237,22 @@ export function App() {
             </select>
           </label>
           <label>
+            travel
+            <select
+              value={travel}
+              // Travel moves the whole figure, which only exists in the animated
+              // branch — off (and greyed out) whenever animation is off.
+              disabled={!animate}
+              onChange={(e) => setTravel(e.target.value as Travel | "")}
+            >
+              {TRAVELS.map((t) => (
+                <option key={t} value={t}>
+                  {t === "" ? "off" : t}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
             expression
             <select
               value={expr}
@@ -334,7 +358,12 @@ export function App() {
               title={seed}
               onClick={() => setFocus(seed)}
             >
-              <Blobatar name={seed} animate={animate} {...opts} />
+              <Blobatar
+                name={seed}
+                animate={animate}
+                travel={travel || undefined}
+                {...opts}
+              />
             </button>
           ) : (
             <button
@@ -384,7 +413,12 @@ export function App() {
               </div>
             ) : animate ? (
               <div className="big">
-                <Blobatar name={focus} animate="always" {...opts} />
+                <Blobatar
+                  name={focus}
+                  animate="always"
+                  travel={travel || undefined}
+                  {...opts}
+                />
               </div>
             ) : (
               <div

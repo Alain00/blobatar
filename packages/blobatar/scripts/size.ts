@@ -86,7 +86,7 @@ const ENTRIES: {
     // the body ellipse. Measured against the arc-drawn single-outline version of
     // the same two shapes, which is a further 108 B for an identical render.
     name: "blob only",
-    budget: 4410,
+    budget: 4435,
     external: [] as string[],
     source: `import { blobatar } from "../../src/blob";
              globalThis.x = blobatar(String(globalThis.seed));`,
@@ -95,14 +95,19 @@ const ENTRIES: {
     // The barrel. Costs more than `blob only` above because it also carries the
     // colour and trait utilities, which a consumer who only renders never touches.
     name: "barrel",
-    budget: 4400,
+    budget: 4425,
     external: [],
     source: `import { blobatar } from "../../src/index";
              globalThis.x = blobatar(String(globalThis.seed));`,
   },
   {
     name: "uri",
-    budget: 4490,
+    // Raised from 4490 by ~30 B for the 3D/travel feature: the depth ellipses
+    // and the mo-travel wrapper are emitted from `compose.render`'s animated
+    // branch, and branch code ships even when never executed — plus a further
+    // ~13 B when the sheen moved under the eyes inside the head group. See
+    // docs/3d-directional-motion-plan.md §7.
+    budget: 4520,
     external: [],
     source: `import { blobatarUri } from "../../src/uri";
              globalThis.x = blobatarUri(String(globalThis.seed));`,
@@ -125,8 +130,13 @@ const ENTRIES: {
     // as `--mo-head`/`--mo-eye`. Those go out on every animated `blob`, tinted
     // or not, so the stylesheet's `fill` rules always resolve to something
     // correct — a `var()` with nothing behind it makes `fill` inherit black.
+    // Raised again from 5370 by ~146 B for travel + depth (see
+    // docs/3d-directional-motion-plan.md): `travelVars`, the travel prop on
+    // both arms of the union, and the animated branch emitting the ground
+    // shadow, sheen, and wrapper group. All of it rides the existing
+    // MotionFactory indirection — none of it is reachable from the string API.
     name: "react",
-    budget: 5370,
+    budget: 5550,
     external: ["react"],
     source: `import { Blobatar } from "../../src/react";
              globalThis.x = Blobatar;`,
@@ -138,7 +148,7 @@ const ENTRIES: {
     // Measured: +343 B for the first expression (the shared serializer and bake,
     // paid once) and +36 B for each one after it. Importing all three is 4098.
     name: "blob + happy",
-    budget: 4740,
+    budget: 4765,
     external: [],
     source: `import { blobatar } from "../../src/blob";
              import { happy } from "../../src/expression";
@@ -163,7 +173,9 @@ const ENTRIES: {
     // likely to need a correction, and a gate that fails on a 20 B bug fix
     // teaches people to raise the number without reading it.
     name: "vue",
-    budget: 5650,
+    // Raised from 5650 by 70 B for travel + depth, same as the react row above
+    // (see docs/3d-directional-motion-plan.md §7) plus the new declared prop.
+    budget: 5720,
     external: ["vue"],
     source: `import { Blobatar } from "../../src/vue";
              globalThis.x = Blobatar;`,
@@ -240,7 +252,13 @@ const ENTRIES: {
     //  - The touch-device exception, ~55 B, which is the price of the loop not
     //    being gated on `--mo-amp` like everything else in the file. Without it
     //    the feature is frozen on every phone.
-    budget: 1550,
+    // Raised from 1550 by 100 B for the travel layer: one rule, one keyframes
+    // block with a fade-wrap loop (opacity at the extremes so the edge-to-edge
+    // wrap is invisible), the touch-device removal that keeps a paused phone
+    // from catching a transparent mid-frame, and the `.mo-travel` additions to
+    // the shared origin and reduced-motion lists. See
+    // docs/3d-directional-motion-plan.md §7.
+    budget: 1650,
     external: [],
     ext: "css",
     source: `@import "../../src/motion.css";`,

@@ -149,7 +149,11 @@ edge means nothing of the kind.
 **Rendering mode**:
 Static blobatars are a single `<img>`; animated ones are inline SVG of roughly a
 dozen nodes. `animate` selects between them — the two cannot be combined,
-because `:hover` and host-page CSS cannot reach inside an `<img>`.
+because `:hover` and host-page CSS cannot reach inside an `<img>`. Since the
+travel/depth feature they also differ in *drawing*, not only in motion: the
+animated path adds a ground shadow, a face sheen and a travel group, because
+static output is frozen per major and new geometry can only land where it can
+be seen to move. The modes render the same creature either way.
 
 **Adapter**:
 A framework integration that owns the outer element, published as its own

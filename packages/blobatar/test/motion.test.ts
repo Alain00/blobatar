@@ -21,14 +21,34 @@ describe("markup", () => {
   test("animating nests the transform layers and marks each eye", () => {
     const { cls, inner } = _parts("alain", { animate: "hover" });
 
-    // One transform property per element, so hover-lift, breathe and bob need
-    // three elements or they overwrite each other. The hover-lift one is the
+    // One transform property per element, so hover-lift, travel, breathe and bob
+    // need four elements or they overwrite each other. The hover-lift one is the
     // caller's — its class varies with the expression, and anything that varies
-    // inside this string costs the morph. See `makeParts`.
+    // inside this string costs the morph. See `makeParts`. Travel wraps
+    // everything (it is the whole figure moving); breathe and bob sit inside it.
     expect(cls).toBe("mo-root");
-    expect(inner).toStartWith('<g class="mo-breathe"><g class="mo-bob">');
+    expect(inner).toStartWith(
+      '<g class="mo-travel"><ellipse',
+    );
+    expect(inner).toContain('<g class="mo-breathe"><g class="mo-bob">');
     expect(inner).not.toContain("mo-root");
     expect(inner.match(/class="mo-eye"/g)).toHaveLength(2);
+  });
+
+  test("travel markup appears only when asked for", () => {
+    // The depth layers ride the same branch as every other motion-only byte:
+    // static output is frozen per major, so an animated-only render is the only
+    // place new geometry can appear. See the plan in
+    // docs/3d-directional-motion-plan.md, decision 1.
+    for (const s of SEEDS) {
+      expect(blobatar(s, { travel: "ltr" })).toBe(blobatar(s));
+      const off = _parts(s, { animate: "hover" });
+      expect(off.inner).not.toContain("--mo-tx");
+      expect(Object.keys(off.vars ?? {})).not.toContain("--mo-tx");
+      const on = _parts(s, { animate: "hover", travel: "seeded" });
+      expect(on.inner).toContain('class="mo-travel"');
+      expect(Object.keys(on.vars!)).toContain("--mo-tx");
+    }
   });
 
   test("the eye class rides a wrapper, not the shape", () => {
@@ -61,6 +81,11 @@ describe("markup", () => {
       // a tremor can be. It still interpolates, because what interpolates is
       // the amplitude the keyframes read — the same trade `--mo-amp` makes.
       if (name === "@keyframes mo-shake") continue;
+      // `mo-travel` is the same exception one layer out: its keyframes read the
+      // seeded per-blobatar travel vector (`--mo-tx`, `--mo-ty`, `--mo-t-lean`),
+      // which is never transitioned and positions nothing the pose owns — the
+      // regex catches them only because `--mo-t-` shares a prefix with `--mo-t`.
+      if (name === "@keyframes mo-travel") continue;
       const hit = block.match(posed);
       expect(hit ? `${name} reads ${hit[0]}` : name).toBe(name);
     }
@@ -130,7 +155,7 @@ describe("markup", () => {
     // child of the `<svg>`. React renders it, which also means React escapes it.
     const { inner } = _parts("alain", { animate: "hover", title: "Ada" });
     expect(inner).not.toContain("<title>");
-    expect(inner).toStartWith('<g class="mo-breathe">');
+    expect(inner).toStartWith('<g class="mo-travel">');
   });
 
   test("markup stays balanced with the wrapper in place", () => {

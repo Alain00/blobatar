@@ -95,9 +95,16 @@ const BROWSERS = [
 
 const found = BROWSERS.map((b) => ({
   ...b,
-  bin: (b.bins.filter(Boolean) as string[]).find(
-    (bin) => Bun.spawnSync([bin, "--version"], { stderr: "ignore" }).success,
-  ),
+  // A missing binary makes Bun.spawnSync throw rather than report failure, so
+  // each candidate is probed defensively — an absent Firefox must skip the
+  // row, not take the whole probe down.
+  bin: (b.bins.filter(Boolean) as string[]).find((bin) => {
+    try {
+      return Bun.spawnSync([bin, "--version"], { stderr: "ignore" }).success;
+    } catch {
+      return false;
+    }
+  }),
 })).filter((b) => b.bin);
 
 if (!found.length) {

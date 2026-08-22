@@ -15,7 +15,12 @@
  */
 
 import { createMemo, splitProps, type JSX } from "solid-js";
-import { _parts, type Animate, type BlobatarOptions } from "blobatar/internal";
+import {
+  _parts,
+  type Animate,
+  type BlobatarOptions,
+  type Travel,
+} from "blobatar/internal";
 import { blobatarUri } from "blobatar/uri";
 
 /**
@@ -23,12 +28,15 @@ import { blobatarUri } from "blobatar/uri";
  * React component declares, for the same reason. `onLoad` should stop
  * type-checking the moment animation is on, because it stops firing.
  */
-type StaticProps = { animate?: false } & Omit<
-  JSX.ImgHTMLAttributes<HTMLImageElement>,
-  "src"
->;
+type StaticProps = {
+  animate?: false;
+} & Omit<Omit<JSX.ImgHTMLAttributes<HTMLImageElement>, "src">, "travel">;
 
-type AnimatedProps = { animate: Animate } & Omit<
+type AnimatedProps = {
+  animate: Animate;
+  /** Whole-figure directional travel; requires `blobatar/motion.css`. */
+  travel?: Travel;
+} & Omit<
   JSX.SvgSVGAttributes<SVGSVGElement>,
   "children" | "innerHTML" | "viewBox"
 >;
@@ -40,7 +48,7 @@ export type BlobatarProps = {
    * same blobatar. The only required prop.
    */
   name: string;
-} & BlobatarOptions &
+} & Omit<BlobatarOptions, "travel"> &
   (StaticProps | AnimatedProps);
 
 /**
@@ -66,6 +74,7 @@ const OPTIONS = [
   "contrast",
   "title",
   "animate",
+  "travel",
   "expression",
   "traits",
 ] as const;
@@ -87,7 +96,15 @@ export function Blobatar(props: BlobatarProps) {
   }));
 
   const parts = createMemo(() =>
-    own.animate ? _parts(own.name, { ...opts(), animate: own.animate }) : null,
+    own.animate
+      ? _parts(own.name, {
+          ...opts(),
+          animate: own.animate,
+          // `splitProps` types the extra key as `unknown` through the
+          // `Record<string, unknown>` arm of the cast above.
+          travel: own.travel as Travel | undefined,
+        })
+      : null,
   );
 
   const src = createMemo(() => (own.animate ? "" : blobatarUri(own.name, opts())));

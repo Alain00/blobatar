@@ -1,4 +1,10 @@
-import { motionVars, rootClass, type Animate } from "./animate";
+import {
+  motionVars,
+  rootClass,
+  travelVars,
+  type Animate,
+  type Travel,
+} from "./animate";
 import type { Palette } from "./color";
 import type { Expression } from "./expression";
 import { makeBlobatar, makeParts, resolve, type BlobatarOptions } from "./render";
@@ -6,7 +12,7 @@ import { style } from "./styles/blob";
 import type { Layout } from "./styles/compose";
 import type { Traits } from "./traits";
 
-export type { BlobatarOptions, Animate, Expression };
+export type { BlobatarOptions, Animate, Expression, Travel };
 
 /**
  * Renders a deterministic blobatar as SVG markup.
@@ -25,7 +31,9 @@ export const blobatar = makeBlobatar(style);
  * animating, the pose is custom properties on the same element the timing goes
  * on, not geometry. `poseVars` returns nothing at all for `"idle"`.
  */
-const motion = (mode: Animate, e?: Expression) => (t: Traits, p: Palette) => {
+const motion =
+  (mode: Animate, e?: Expression, travel?: Travel) =>
+  (t: Traits, p: Palette) => {
   // `vars` is also how we know whether to set `mo-expr`: an expression that
   // moves nothing emits nothing, so an empty object *is* idle. That keeps the
   // class in step with the pose without a second notion of "is this idle".
@@ -42,6 +50,11 @@ const motion = (mode: Animate, e?: Expression) => (t: Traits, p: Palette) => {
     cls: rootClass(mode, !!Object.keys(pose).length || !!e?.tint),
     vars: {
       ...motionVars(t),
+      // Travel timing rides the same closure. Computed here rather than
+      // imported at the top level of a module a static bundle could reach —
+      // the vars function only executes when the caller asked for travel, and
+      // the factory itself is only constructed when animating.
+      ...(travel ? travelVars(t, travel) : {}),
       // The fills, as custom properties, on every animated `blob` — tinted when
       // the pose tints and identical to the markup's own attributes when it does
       // not. Emitted unconditionally rather than only for hot poses, because the
@@ -69,7 +82,7 @@ export function _parts(name: string, opts: BlobatarOptions = {}) {
   return makeParts(style)(
     name,
     opts,
-    opts.animate && motion(opts.animate, opts.expression),
+    opts.animate && motion(opts.animate, opts.expression, opts.travel),
   );
 }
 

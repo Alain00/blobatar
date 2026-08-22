@@ -78,8 +78,12 @@ const ENTRIES: {
     // those in flight — the v3 swap, where the implementation moves into the
     // package and `blobatar/react` is deleted. On that day the subpath rows go
     // away and these are what is left.
+    // Raised from 5260 by ~242 B for travel + depth (see
+    // docs/3d-directional-motion-plan.md §7): `travelVars`, the depth ellipses
+    // and wrapper group in the animated branch, and the prop on both union
+    // arms. The same delta core's `react` row absorbed, measured through dist.
     name: "@blobatar/react",
-    budget: 5260,
+    budget: 5520,
     external: ["react"],
     source: `import { Blobatar } from "@blobatar/react";
              globalThis.x = Blobatar;`,
@@ -96,7 +100,7 @@ const ENTRIES: {
     // This row is here so the pair delta below has something to subtract, and
     // it retires with the subpath in v3.
     name: "blobatar/react",
-    budget: 5240,
+    budget: 5520,
     external: ["react"],
     source: `import { Blobatar } from "blobatar/react";
              globalThis.x = Blobatar;`,
@@ -107,7 +111,7 @@ const ENTRIES: {
     // `default: undefined` on every prop. Vue surface, not packaging — its
     // indirection over the subpath row is 27 B against React's 24.
     name: "@blobatar/vue",
-    budget: 5440,
+    budget: 5720,
     external: ["vue"],
     ext: "ts",
     source: `import { Blobatar } from "@blobatar/vue";
@@ -115,7 +119,7 @@ const ENTRIES: {
   },
   {
     name: "blobatar/vue",
-    budget: 5410,
+    budget: 5720,
     external: ["vue"],
     ext: "ts",
     source: `import { Blobatar } from "blobatar/vue";
@@ -131,7 +135,7 @@ const ENTRIES: {
     // scaffolding per element, where React's row is a re-export standing in
     // front of core's already-minified `dist/react.js`.
     name: "@blobatar/solid",
-    budget: 6470,
+    budget: 6720,
     external: ["solid-js", "solid-js/web"],
     ext: "tsx",
     source: `import { Blobatar } from "@blobatar/solid";
@@ -141,7 +145,7 @@ const ENTRIES: {
     // 6011 B measured, ~780 B over React's row and ~420 B under Solid's — the
     // same component written against a runtime that needs less per element.
     name: "@blobatar/preact",
-    budget: 6050,
+    budget: 6320,
     external: ["preact", "preact/hooks", "preact/jsx-runtime"],
     ext: "tsx",
     source: `import { Blobatar } from "@blobatar/preact";

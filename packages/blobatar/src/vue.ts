@@ -28,7 +28,7 @@ import {
   type CSSProperties,
   type PropType,
 } from "vue";
-import { serializeVars, type Animate } from "./animate";
+import { serializeVars, type Animate, type Travel } from "./animate";
 import { _parts, type BlobatarOptions } from "./blobatar";
 import type { Palette } from "./color";
 import type { Expression } from "./expression";
@@ -134,6 +134,12 @@ export const Blobatar = defineComponent({
       type: [String, Boolean] as PropType<Animate | false>,
       default: undefined,
     },
+    /**
+     * Whole-figure directional travel. One of `"ltr" | "rtl" | "ttb" |
+     * "btt"`, or `"seeded"` to let the name pick. Requires
+     * `blobatar/motion.css`; ignored without `animate`.
+     */
+    travel: { type: String as PropType<Travel>, default: undefined },
     /** Which pose the blobatar holds. Import one from `blobatar/expression`. */
     expression: { type: Object as PropType<Expression> },
   },
@@ -173,6 +179,7 @@ export const Blobatar = defineComponent({
             ...opts.value,
             // `true` (template shorthand) means the same as "hover".
             animate: props.animate === "always" ? "always" : "hover",
+            travel: props.travel || undefined,
           })
         : null,
     );
