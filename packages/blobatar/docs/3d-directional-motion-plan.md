@@ -205,11 +205,17 @@ The council (oracle, forked context; reviewer) converged across two passes on:
    `default: undefined`. It is also deliberately **not gated on hover**:
    folding position through `--mo-amp` glides the figure home on hover-out,
    which is the wrong shape for a walk — opting in per render is the gate.
-3. **Fade-wrap**, not ping-pong: one keyframes block where opacity dips to 0 at
-   both extremes and the edge-to-edge jump happens entirely inside the invisible
-   window. Reduced motion removes the animation outright (figure rests center,
-   fully visible — never stranded transparent); touch devices likewise get
-   removal rather than pause, so no paused phone catches an empty cell.
+3. **Traverse loop — fade-wrap superseded by ping-pong (owner call after
+   visual review).** The council converged on fade-wrap (opacity dips to 0 at
+   both extremes so the edge-to-edge jump is invisible); the probe verified it;
+   the owner rejected it on sight — a blobatar that spends part of its loop at
+   opacity 0 is a hole in the grid, and this library's whole product is "a face
+   for every name". Nothing here may disappear. The shipped loop is a
+   **ping-pong traverse** (`animation-direction: alternate`, ease-in-out):
+   cross, reverse, cross again, every frame fully present. Reversal reads as
+   pacing rather than as a screensaver because lean, bob, blink and gaze stay
+   live through it. Reduced motion removes the animation outright (figure rests
+   center); touch devices likewise get removal rather than pause.
 4. **Endpoint/CLI flags deferred**, unchanged from the draft.
 
 Two further corrections adopted in pass 2:
