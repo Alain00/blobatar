@@ -218,6 +218,7 @@
  * declares `fill-box` for itself.
  */
 .mo-root,
+.mo-travel,
 .mo-breathe,
 .mo-bob {
   transform-box: view-box;
@@ -350,7 +351,7 @@
  * and has exactly two children, so "the group that is not the eyes" is not a
  * guess about the DOM; it is the whole of it.
  */
-.mo-bob > g:not(.mo-eyes) {
+.mo-bob > g:not(.mo-eyes):not(.mo-sheen) {
   fill: var(--mo-head);
   transition: fill var(--mo-morph) var(--mo-morph-ease);
 }
@@ -452,6 +453,72 @@
  */
 .mo-root.mo-always {
   --mo-amp: 1;
+}
+
+/**
+ * Travel — the whole figure crossing its frame.
+ *
+ * Lives on its own wrapper group, and the ownership has to be stated because
+ * every other motion layer was placed by the same audit: this element's
+ * `translate` and `rotate` are claimed by nothing else (the hover lift owns
+ * `transform` on `.mo-root`, bob `transform` on `.mo-bob`, the saccade
+ * `translate` on `.mo-eyes`, the tremor `translate` on the root). The wrapper
+ * sits inside the root but outside breathe/bob, so it carries the ground shadow
+ * with it while the creature bobs over the shadow independently — which is most
+ * of the depth read.
+ *
+ * **Travel does not fold through `--mo-amp`, deliberately.** A positional
+ * traverse that amplitude-gates glides the figure back to center on hover-out —
+ * the wrong shape for a walk. The option itself is the gate: nobody gets travel
+ * they did not ask for. Reduced motion removes the animation outright, which
+ * rests the figure at center, fully visible — never stranded mid-frame, and
+ * never invisible at a wrap edge.
+ *
+ * The keyframes are fade-wrap: exit one edge fading out, re-enter the other
+ * fading in, with the jump between edges happening entirely inside the opacity
+ * window where nothing is visible. Opacity is driven only at the extremes and
+ * holds 1 across the whole middle of the path, so a paused or mid-load frame is
+ * almost always fully visible — and on touch devices the animation is removed
+ * rather than paused below, so no blobatar is ever caught transparent.
+ */
+.mo-travel {
+  animation-name: mo-travel;
+  animation-duration: calc(var(--mo-t-period, 12000ms) * var(--mo-rate, 1));
+  animation-delay: calc(var(--mo-t-phase, 0ms) * var(--mo-rate, 1));
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes mo-travel {
+  0% {
+    translate: calc(var(--mo-tx, 0px) * -1) calc(var(--mo-ty, 0px) * -1);
+    rotate: calc(var(--mo-t-lean, 0deg) * -1);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  50% {
+    translate: var(--mo-tx, 0px) var(--mo-ty, 0px);
+    rotate: var(--mo-t-lean, 0deg);
+    opacity: 0;
+  }
+  /* The wrap: from the far edge back to the start edge while nothing is
+     visible. Interpolated position crosses the middle of the frame here, but
+     opacity is still zero from the stop above. */
+  56% {
+    translate: calc(var(--mo-tx, 0px) * -1) calc(var(--mo-ty, 0px) * -1);
+    rotate: calc(var(--mo-t-lean, 0deg) * -1);
+    opacity: 0;
+  }
+  62% {
+    opacity: 1;
+  }
+  100% {
+    translate: var(--mo-tx, 0px) var(--mo-ty, 0px);
+    rotate: var(--mo-t-lean, 0deg);
+    opacity: 0;
+  }
 }
 
 /**
@@ -1109,6 +1176,19 @@
   }
 
   /*
+   * …except travel, which is removed rather than paused, and for a reason the
+   * other layers do not have: its keyframes pass through opacity 0 at the wrap
+   * edges. A blobatar paused there is a hole in the grid — not still, gone.
+   * Removing the animation rests the figure at center, fully visible. Travel is
+   * ambient decoration, so removing it costs nothing (the same call the idle
+   * loop makes under reduced motion), and `always` mode keeps it: that mode's
+   * whole point is one deliberately animated figure.
+   */
+  .mo-root:not(.mo-always) .mo-travel {
+    animation: none;
+  }
+
+  /*
    * …except the seesaw, which is the one loop here that is not ambient.
    *
    * Everything the rule above stops is gated on `--mo-amp`, which this query has
@@ -1163,6 +1243,7 @@
  */
 @media (prefers-reduced-motion: reduce) {
   .mo-root,
+  .mo-travel,
   .mo-breathe,
   .mo-bob,
   .mo-eyes,

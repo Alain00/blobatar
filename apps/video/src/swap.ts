@@ -42,8 +42,13 @@ export const SIZE = 400;
  *
  * So the number on screen is the size of the blobatar the two agree on, and the
  * caption says "of svg" rather than "of output" for that reason.
+ *
+ * 1390 as of the travel/depth change (docs/3d-directional-motion-plan.md): an
+ * animated blobatar now also carries the ground shadow, the sheen, and the
+ * mo-travel wrapper. Static renders are untouched — this number pins the
+ * animated one precisely because that is the branch new markup lands in.
  */
-export const BYTES = 1184;
+export const BYTES = 1390;
 
 /** The two specifiers, and the only characters in the film that change. */
 export const FROM = "react";

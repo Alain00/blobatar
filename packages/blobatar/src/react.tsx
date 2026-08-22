@@ -22,7 +22,7 @@
  */
 
 import { useMemo, type ImgHTMLAttributes, type SVGProps } from "react";
-import type { Animate } from "./animate";
+import type { Animate, Travel } from "./animate";
 import { _parts, type BlobatarOptions } from "./blobatar";
 import { blobatarUri } from "./uri";
 
@@ -42,9 +42,21 @@ import { blobatarUri } from "./uri";
  * The union is deliberate: `onLoad` should stop type-checking the moment you
  * turn animation on, because it stops firing.
  */
-type StaticProps = { animate?: false } & Omit<ImgHTMLAttributes<HTMLImageElement>, "src">;
+type StaticProps = {
+  animate?: false;
+  /** Present so the union can be destructured; ignored without `animate`. */
+  travel?: undefined;
+} & Omit<Omit<ImgHTMLAttributes<HTMLImageElement>, "src">, "travel">;
 
-type AnimatedProps = { animate: Animate } & Omit<
+type AnimatedProps = {
+  animate: Animate;
+  /**
+   * Whole-figure directional travel — `"ltr" | "rtl" | "ttb" | "btt"`, or
+   * `"seeded"` to let the name pick. Requires `blobatar/motion.css`. Ignored
+   * without `animate`.
+   */
+  travel?: Travel;
+} & Omit<
   SVGProps<SVGSVGElement>,
   "children" | "dangerouslySetInnerHTML" | "viewBox"
 >;
@@ -62,7 +74,7 @@ export type BlobatarProps = {
    * derivation still call it one — see `CONTEXT.md`.
    */
   name: string;
-} & BlobatarOptions &
+} & Omit<BlobatarOptions, "travel"> &
   (StaticProps | AnimatedProps);
 
 export function Blobatar({
@@ -76,6 +88,7 @@ export function Blobatar({
   contrast,
   title,
   animate,
+  travel,
   expression,
   traits,
   ...rest
@@ -88,7 +101,7 @@ export function Blobatar({
   // Both branches are hooks-stable: `animate` changing swaps the element type,
   // which remounts anyway.
   //
-  const dep = JSON.stringify([seed, opts, animate]);
+  const dep = JSON.stringify([seed, opts, animate, travel]);
 
   const src = useMemo(
     () => (animate ? "" : blobatarUri(seed, opts)),
@@ -97,7 +110,7 @@ export function Blobatar({
   );
 
   const parts = useMemo(
-    () => (animate ? _parts(seed, { ...opts, animate }) : null),
+    () => (animate ? _parts(seed, { ...opts, animate, travel }) : null),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [dep],
   );

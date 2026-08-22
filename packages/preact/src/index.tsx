@@ -16,7 +16,12 @@
 
 import { useMemo } from "preact/hooks";
 import type { JSX } from "preact";
-import { _parts, type Animate, type BlobatarOptions } from "blobatar/internal";
+import {
+  _parts,
+  type Animate,
+  type BlobatarOptions,
+  type Travel,
+} from "blobatar/internal";
 import { blobatarUri } from "blobatar/uri";
 
 /**
@@ -24,12 +29,17 @@ import { blobatarUri } from "blobatar/uri";
  * React component declares, for the same reason. `onLoad` should stop
  * type-checking the moment animation is on, because it stops firing.
  */
-type StaticProps = { animate?: false } & Omit<
-  JSX.HTMLAttributes<HTMLImageElement>,
-  "src"
->;
+type StaticProps = {
+  animate?: false;
+  /** Present so the union can be destructured; ignored without `animate`. */
+  travel?: undefined;
+} & Omit<Omit<JSX.HTMLAttributes<HTMLImageElement>, "src">, "travel">;
 
-type AnimatedProps = { animate: Animate } & Omit<
+type AnimatedProps = {
+  animate: Animate;
+  /** Whole-figure directional travel; requires `blobatar/motion.css`. */
+  travel?: Travel;
+} & Omit<
   JSX.SVGAttributes<SVGSVGElement>,
   "children" | "dangerouslySetInnerHTML"
 >;
@@ -41,7 +51,7 @@ export type BlobatarProps = {
    * same blobatar. The only required prop.
    */
   name: string;
-} & BlobatarOptions &
+} & Omit<BlobatarOptions, "travel"> &
   (StaticProps | AnimatedProps);
 
 export function Blobatar({
@@ -55,6 +65,7 @@ export function Blobatar({
   contrast,
   title,
   animate,
+  travel,
   expression,
   traits,
   ...rest
@@ -77,12 +88,12 @@ export function Blobatar({
 
   // Both branches are hooks-stable: `animate` changing swaps the element type,
   // which remounts anyway.
-  const dep = JSON.stringify([seed, opts, animate]);
+  const dep = JSON.stringify([seed, opts, animate, travel]);
 
   const src = useMemo(() => (animate ? "" : blobatarUri(seed, opts)), [dep]);
 
   const parts = useMemo(
-    () => (animate ? _parts(seed, { ...opts, animate }) : null),
+    () => (animate ? _parts(seed, { ...opts, animate, travel }) : null),
     [dep],
   );
 

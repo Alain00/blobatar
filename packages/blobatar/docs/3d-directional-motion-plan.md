@@ -1,6 +1,9 @@
 # Plan: 3D blobatars with directional expression motion
 
-**Status: draft — awaiting decisions in §9.**
+**Status: implemented.** The council converged (two advisors, two passes; see
+the decision record at the bottom) and the build landed on this branch. §6's
+open decisions are resolved below and in the implementation.
+
 Reads after [motion-spec.md](./motion-spec.md) and
 [expression-spec.md](./expression-spec.md), which this extends and does not
 replace.
@@ -183,27 +186,47 @@ existing spec.
 
 ---
 
-## 6. Open decisions — need answers before step 2
+## 6. Open decisions — RESOLVED by council
 
-1. **Do static renders change?** The depth shading (§2 Option A) is visible in
-   a still image. Two defensible answers:
-   - a. Yes, deliberately — depth is part of the look, golden fixtures update
-     once, documented as a minor with a fixture-regeneration note. But see the
-     guarantee: same name ⇒ same render *within a major*, so this lands in the
-     next minor only if we accept that a "minor" changed every picture.
-   - b. No — shading layers appear only in animated (inline-SVG) mode, keeping
-     static byte-stable but making the modes visually diverge, which the
-     rendering-mode entry in CONTEXT.md currently says differs only in motion.
-   Draft recommendation: **(a)**, shipped as a minor with loud changelog notes;
-   the alternative quietly violates "two adapters given the same options render
-   the same blobatar" less than it violates "the picture you pinned".
-2. **Is `"seeded"` direction the default?** Default `"none"` preserves every
-   existing consumer; defaulting anything animated contradicts the opt-in rule
-   the whole motion layer stands on. Draft: `"none"`.
-3. **Wrap vs bounce** (§3.4) — draft: wrap.
-4. **Does travel deserve a spot in the endpoint query table now?** Draft: no;
-   revisit if the wall (ADR-0011) wants walking blobs — at which point the
-   param naming convention with the CLI kicks in simultaneously.
+The council (oracle, forked context; reviewer) converged across two passes on:
+
+1. **Static renders do not change.** Both advisors flagged the draft's
+   recommendation (a) as a blocker: `test/golden.test.ts` pins static output
+   byte-identical within a major ("a failure is not a fixture update"), and
+   `src/blobatar.ts` publishes the same guarantee. Depth cues therefore ship in
+   the **animated inline-SVG path only**: a ground-shadow ellipse (outside
+   breathe/bob, inside travel — grounded while the creature bobs over it), and
+   a sheen pinned to the upper face *under* the eyes. Plain palette-derived
+   geometry — gradients need ids (this library emits none) and filters repaint
+   per frame. Full static depth waits for the next major.
+2. **Default `"none"`**, and travel is **adapter-honored only**, exactly like
+   `animate`: the string API ignores it (the ~190 B branch argument), React's
+   union carries it on the animated arm, Vue declares it with
+   `default: undefined`. It is also deliberately **not gated on hover**:
+   folding position through `--mo-amp` glides the figure home on hover-out,
+   which is the wrong shape for a walk — opting in per render is the gate.
+3. **Fade-wrap**, not ping-pong: one keyframes block where opacity dips to 0 at
+   both extremes and the edge-to-edge jump happens entirely inside the invisible
+   window. Reduced motion removes the animation outright (figure rests center,
+   fully visible — never stranded transparent); touch devices likewise get
+   removal rather than pause, so no paused phone catches an empty cell.
+4. **Endpoint/CLI flags deferred**, unchanged from the draft.
+
+Two further corrections adopted in pass 2:
+
+- **Transform-property ownership map**: whole-figure motion lives on a new
+  `<g class="mo-travel">` owning `translate` + seeded ±2° `rotate` — claimed by
+  nothing else on any element (root owns `transform`, bob `transform`, saccade
+  and tremor `translate` elsewhere). Real perspective rotateX/Y dropped:
+  engine-risky per motion-spec §4.7's history.
+- **Probe discipline held**: the compose probe caught a real defect the unit
+  suite could not see — the sheen originally painted over the eyes, which its
+  `elementFromPoint` sampling read as eye movement during blinks. Sheen moved
+  under the eyes, which is also the correct layering.
+
+Budgets absorbed the cost with documented bumps in both gates (core `size.ts`
+and harness `size.ts`); the video app's byte-count pin (`apps/video/src/swap.ts`)
+was re-measured for the same reason.
 
 ## 7. Budget sketch (to be filled by measurement, not hope)
 

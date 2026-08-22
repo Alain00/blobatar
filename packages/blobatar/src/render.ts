@@ -1,4 +1,4 @@
-import type { Animate } from "./animate";
+import type { Animate, Travel } from "./animate";
 import { palette as buildPalette, type Palette } from "./color";
 import type { Expression, Posable } from "./expression";
 import { superellipse } from "./shape";
@@ -67,6 +67,22 @@ export interface BlobatarOptions {
    * its own entry point, not a branch here.
    */
   animate?: Animate;
+  /**
+   * Whole-figure directional travel — the figure crosses its frame along one
+   * cardinal direction, wrapping edge to edge. One of `"ltr"`, `"rtl"`,
+   * `"ttb"`, `"btt"`, or `"seeded"` (the name picks the direction). Off by
+   * default; requires `animate` and `blobatar/motion.css`, since a static
+   * `<img>` cannot move.
+   *
+   **Honored by the framework adapters only**, for the same measured reason as
+   * `animate`: the string API returns static markup regardless. Travel is also
+   * deliberately **not** gated on hover the way the idle layers are. Its
+   * position cannot fold through `--mo-amp` — a positional traverse that
+   * amplitude-gates glides the figure back to center on hover-out, which is
+   * precisely the wrong shape for a walk — so opting in per render is the
+   * gate: nobody gets travel they did not ask for.
+   */
+  travel?: Travel;
   /**
    * Which pose the blobatar holds. Import one from `blobatar/expression`.
    *

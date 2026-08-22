@@ -105,16 +105,44 @@ export function compose(bands: Band[], fit: Fit) {
         ? `<g class="mo-eye" style="--mo-wrap:${i ? 1 : -1};--mo-lean:${r2(e.rot)};transform-origin:${r2(e.cx)}px ${r2(e.cy)}px">${path}</g>`
         : path;
     };
-    const body =
-      `<g fill="${p.head}">` +
+    const b = l.body;
+    const f = l.face;
+    const shadow =
+      `<ellipse cx="${r2(b.cx)}" cy="${r2(Math.min(97, b.cy + b.ry + b.rx * 0.06))}" rx="${r2(b.rx * 0.72)}" ry="${r2(b.rx * 0.13)}" fill="${p.eye}" opacity="0.14"/>`;
+    const sheen =
+      `<ellipse class="mo-sheen" cx="${r2(f.cx - f.rx * 0.25)}" cy="${r2(f.cy - f.ry * 0.45)}" rx="${r2(f.rx * 0.28)}" ry="${r2(f.ry * 0.18)}" fill="${p.bg}" opacity="0.35"/>`;
+    const bodyCore =
       l.petals.map(d => `<circle cx="${r2(d.cx)}" cy="${r2(d.cy)}" r="${r2(d.r)}"/>`).join("") +
       l.extra.map(d => `<path d="${d}"/>`).join("") +
-      `<path d="${l.draw ? l.draw(l.body) : superellipse(l.body)}"/>` +
+      `<path d="${l.draw ? l.draw(l.body) : superellipse(l.body)}"/>`;
+    const body =
+      `<g fill="${p.head}">` +
+      bodyCore +
+      // Sheen UNDER the eyes: later siblings paint on top, and a milky wash
+      // across the eyes reads as a cataract — probe check H catches exactly
+      // that, because its elementFromPoint sampling sees the sheen instead of
+      // the eye wherever they overlap.
+      (mo ? sheen : "") +
       `</g>` +
       `<g fill="${p.eye}"${mo ? ` class="mo-eyes"` : ""}>` +
       l.eyes.map(eye).join("") +
       `</g>`;
-    return mo ? `<g class="mo-breathe"><g class="mo-bob">${body}</g></g>` : body;
+    if (!mo) return body;
+    // The animated half adds three things the static path never draws, all of
+    // them plain palette-derived geometry — no gradients (a per-seed radial
+    // gradient needs an id, and this library emits none), no filters (they
+    // repaint on the main thread every frame of a traverse):
+    //
+    // - A ground shadow, OUTSIDE breathe/bob but inside travel. Grounded is the
+    //   point: the creature bobs over a shadow that stays put, which is most of
+    //   the depth read for one ellipse.
+    // - A sheen, INSIDE bob, pinned to the upper face so it rides with the
+    //   body — and under the eyes; see the note at its emission above.
+    // - The travel wrapper itself, which owns `translate`/`rotate` for whole-
+    //   figure motion — properties nothing else claims on any element (the
+    //   hover lift has `transform` on the root, bob `transform` here, saccade
+    //   and tremor `translate` elsewhere).
+    return `<g class="mo-travel">${shadow}<g class="mo-breathe"><g class="mo-bob">${body}</g></g></g>`;
   }
 
   return { layout, render, background: false as const };
