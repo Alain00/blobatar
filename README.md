@@ -160,6 +160,34 @@ static and animated widgets. Its checked-in reference vectors pin blobatar
 parity evidence, supported platforms, reduced-motion behavior, and the pure
 Dart calculation API.
 
+### Swift and SwiftUI
+
+In Xcode, add `https://github.com/Alain00/blobatar.git` from version `2.8.0`,
+then link `BlobatarSwiftUI` to the application target.
+
+```swift
+import BlobatarCore
+import BlobatarSwiftUI
+
+AnimatedBlobatar(
+  name: user.email,
+  size: 64,
+  options: BlobatarOptions(
+    background: .squircle,
+    expression: .happy
+  ),
+  animation: .always,
+  accessibilityLabel: "Avatar of \(user.displayName)"
+)
+```
+
+The official native SDK lives in [`packages/swift`](./packages/swift). It
+resolves generation-2 geometry in pure Swift and paints native SwiftUI `Canvas`
+paths on iOS 15+ and macOS 12+. Its cross-runtime tests consume the same frozen
+TypeScript `2.4.0` fixtures, so the seed-to-look mapping is unchanged. See the
+Swift package README for installation, API examples, parity evidence, platform
+support, and documented SVG, raster, hover, and gaze boundaries.
+
 ### shadcn/ui
 
 The registry serves shadcn's `Avatar` with a blobatar as the fallback for a

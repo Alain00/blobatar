@@ -11,6 +11,99 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  swift:
+    name: swift ${{ matrix.name }}
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: minimum
+            xcode-version: "16.0"
+            build-ios: false
+          - name: current
+            xcode-version: latest-stable
+            build-ios: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ matrix.xcode-version }}
+
+      - name: Toolchain
+        run: |
+          swift --version
+          xcodebuild -version
+
+      - name: Validate package manifest
+        run: swift package dump-package
+
+      - name: Format
+        run: >-
+          swift format lint --strict --recursive
+          Package.swift
+          packages/swift/Sources
+          packages/swift/Tests
+          packages/swift/Tests/Consumer/Package.swift
+          packages/swift/Examples/BlobatarStudio/Package.swift
+          packages/swift/Examples/BlobatarStudio/Sources
+          packages/swift/Examples/BlobatarStudio/Tests
+
+      - name: Build package and tests
+        run: swift build --build-tests -Xswiftc -warnings-as-errors
+
+      - name: Test package
+        run: swift test -Xswiftc -warnings-as-errors
+
+      - name: Build DocC documentation
+        if: matrix.name == 'current'
+        run: |
+          xcodebuild -scheme BlobatarCore -destination 'platform=macOS' -derivedDataPath "$RUNNER_TEMP/blobatar-core-docc" OTHER_DOCC_FLAGS='--warnings-as-errors' docbuild
+          xcodebuild -scheme BlobatarSwiftUI -destination 'platform=macOS' -derivedDataPath "$RUNNER_TEMP/blobatar-swiftui-docc" OTHER_DOCC_FLAGS='--warnings-as-errors' docbuild
+
+      - name: Resolve clean consumer through root manifest
+        run: |
+          swift package --package-path packages/swift/Tests/Consumer resolve
+          swift run --package-path packages/swift/Tests/Consumer BlobatarConsumerSmoke
+
+      - name: Build and test Blobatar Studio
+        run: >-
+          swift test
+          --package-path packages/swift/Examples/BlobatarStudio
+          -Xswiftc -warnings-as-errors
+
+      - name: Build Blobatar Studio for macOS
+        run: >-
+          xcodebuild
+          -project packages/swift/Examples/BlobatarStudio/BlobatarStudio.xcodeproj
+          -scheme BlobatarStudio
+          -destination 'platform=macOS'
+          CODE_SIGNING_ALLOWED=NO
+          build
+
+      # Older Xcodes remain useful language/package floors after GitHub removes
+      # their matching iOS platform files from hosted images. The current SDK
+      # owns the deployment-target build; both matrix legs still compile and
+      # test both package products above.
+      - name: Build SwiftUI product for iOS
+        if: matrix.build-ios
+        run: >-
+          xcodebuild
+          -scheme BlobatarSwiftUI
+          -destination 'generic/platform=iOS'
+          CODE_SIGNING_ALLOWED=NO
+          build
+
+      - name: Build Blobatar Studio for iOS
+        if: matrix.build-ios
+        run: >-
+          xcodebuild
+          -project packages/swift/Examples/BlobatarStudio/BlobatarStudio.xcodeproj
+          -scheme BlobatarStudio
+          -destination 'generic/platform=iOS'
+          CODE_SIGNING_ALLOWED=NO
+          build
   flutter:
     name: flutter ${{ matrix.flutter-version }}
     runs-on: ubuntu-latest
