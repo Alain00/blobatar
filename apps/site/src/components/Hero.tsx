@@ -557,7 +557,7 @@ export function Hero() {
               */}
               <span
                 className={cn(
-                  "inline-grid border-b border-dashed pb-1 transition-colors duration-200",
+                  "inline-grid max-w-full overflow-hidden border-b border-dashed pb-1 transition-colors duration-200",
                   // The dashed rule is the entire affordance now — there is no box
                   // and no caret until you are in it — so it has to answer a
                   // hovering pointer. Three states: at rest, under the pointer,
@@ -923,7 +923,7 @@ export function Hero() {
         is four lines you can paste. It regenerates on every control, so there
         is never a step where you have to work out which prop you changed.
       */}
-      <div className="flex w-full flex-col gap-6">
+      <div className="flex w-full min-w-0 flex-col gap-6">
         {/*
           Directly above the snippet, because the two are one instruction in the
           order you carry it out: install the package, then paste the code that
