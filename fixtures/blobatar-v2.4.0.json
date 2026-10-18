@@ -1,13 +1,16 @@
 {
  "meta": {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "upstream": "https://github.com/Alain00/blobatar",
   "version": "2.4.0",
   "generation": "gen2",
   "exportedWith": "16faea0a938f85e0d7612724aafadf98909739e4",
+  "motionExportedWith": "6958577c3c05704175b86d154e9e1a3aa85e9c48",
   "sourceDir": "v2.4.0:packages/blobatar/src",
   "caseCount": 1570,
   "expressionCaseCount": 42,
+  "motionCaseCount": 4,
+  "motionFrameCount": 24,
   "shapeCounts": {
    "boxy": 175,
    "capsule": 152,
@@ -26,10 +29,13 @@
     "stream-floats",
     "palette-hex",
     "path-strings",
-    "shape-names"
+    "shape-names",
+    "motion-seeds",
+    "motion-colors"
    ],
    "relativeTolerance": {
     "layout": 1e-9,
+    "motion": 1e-9,
     "note": "dart:math cos/sin/pow/asin call the host C math library; IEEE 754 does not mandate one bit-exact implementation. Cross-engine differences of one ULP are expected in trig-derived layout floats and are not parity failures. Values rounded by r2 (path data) must still match exactly."
    }
   }
@@ -9442,6 +9448,1018 @@
     }
    ]
   }
+ },
+ "motion": {
+  "durations": {
+   "breathe": 2800,
+   "bob": 3400,
+   "rock": 900,
+   "shake": 112,
+   "ambientRamp": 400,
+   "hoverEnter": 220,
+   "hoverExit": 160,
+   "expressionEnter": 300,
+   "expressionExit": 400
+  },
+  "cases": [
+   {
+    "seed": "alain",
+    "options": {},
+    "seeds": {
+     "phase": 508,
+     "bob": 1170,
+     "blink": 3619,
+     "blinkPhase": 2957,
+     "saccade": 6179,
+     "saccadePhase": 1350,
+     "lookX": 1.95,
+     "lookY": -0.97,
+     "lookMX": 1.95,
+     "lookMY": 0.97
+    },
+    "frames": [
+     {
+      "elapsedMilliseconds": 0,
+      "amplitude": 0,
+      "shake": 0,
+      "frame": {
+       "shake": [
+        0,
+        0
+       ],
+       "breathe": [
+        1,
+        1
+       ],
+       "bob": 0,
+       "saccade": [
+        0,
+        0
+       ],
+       "rockp": 1,
+       "blink": 1,
+       "wrap": {
+        "mx": 0,
+        "side": 0,
+        "sy": 0,
+        "rot": 0
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 0,
+      "amplitude": 1,
+      "shake": 0.55,
+      "frame": {
+       "shake": [
+        0.341,
+        -0.18700000000000003
+       ],
+       "breathe": [
+        1.001470229356656,
+        0.998797085071827
+       ],
+       "bob": -0.27170814718541325,
+       "saccade": [
+        -1.56,
+        0.873
+       ],
+       "rockp": 1,
+       "blink": 1,
+       "wrap": {
+        "mx": -0.03432,
+        "side": 0.0156,
+        "sy": -0.026189999999999998,
+        "rot": -1.225692
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 112,
+      "amplitude": 0.4,
+      "shake": 0.35,
+      "frame": {
+       "shake": [
+        0.217,
+        -0.119
+       ],
+       "breathe": [
+        1.0008859147055549,
+        0.9992751606954551
+       ],
+       "bob": -0.13020773780524297,
+       "saccade": [
+        -0.6240000000000001,
+        0.3492
+       ],
+       "rockp": 0.7440247898289896,
+       "blink": 1,
+       "wrap": {
+        "mx": -0.013728000000000002,
+        "side": 0.00624,
+        "sy": -0.010476,
+        "rot": -0.4902768
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 1234,
+      "amplitude": 1,
+      "shake": 0.55,
+      "frame": {
+       "shake": [
+        0.28914285714285864,
+        -0.16500000000000065
+       ],
+       "breathe": [
+        1.015462618780544,
+        0.9873487664522821
+       ],
+       "bob": -0.903594833714393,
+       "saccade": [
+        1.95,
+        -0.097
+       ],
+       "rockp": -0.7249387100885838,
+       "blink": 1,
+       "wrap": {
+        "mx": -0.042899999999999994,
+        "side": -0.0195,
+        "sy": -0.00291,
+        "rot": -0.170235
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 3619,
+      "amplitude": 1,
+      "shake": 0.18,
+      "frame": {
+       "shake": [
+        -0.07739999999999998,
+        0.0594
+       ],
+       "breathe": [
+        1.0119872283596298,
+        0.9901922677057573
+       ],
+       "bob": -0.7198471591806007,
+       "saccade": [
+        -1.762410988833138,
+        0.1801593030155916
+       ],
+       "rockp": 0.9931350345842767,
+       "blink": 1,
+       "wrap": {
+        "mx": -0.042310434536332715,
+        "side": 0.01762410988833138,
+        "sy": -0.005404779090467749,
+        "rot": -0.18516741139342688
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 5000,
+      "amplitude": 1,
+      "shake": 0.55,
+      "frame": {
+       "shake": [
+        -0.04871428571429122,
+        -0.03300000000000846
+       ],
+       "breathe": [
+        1.0000455442519844,
+        0.9999627365211037
+       ],
+       "bob": -0.0767684801351858,
+       "saccade": [
+        0,
+        0
+       ],
+       "rockp": -0.9510907709234386,
+       "blink": 1,
+       "wrap": {
+        "mx": 0,
+        "side": 0,
+        "sy": 0,
+        "rot": 0
+       }
+      }
+     }
+    ]
+   },
+   {
+    "seed": "Ada Lovelace",
+    "options": {},
+    "seeds": {
+     "phase": 1828,
+     "bob": 841,
+     "blink": 6318,
+     "blinkPhase": 1309,
+     "saccade": 7283,
+     "saccadePhase": 865,
+     "lookX": 1.96,
+     "lookY": 1.36,
+     "lookMX": 1.96,
+     "lookMY": 1.36
+    },
+    "frames": [
+     {
+      "elapsedMilliseconds": 0,
+      "amplitude": 0,
+      "shake": 0,
+      "frame": {
+       "shake": [
+        0,
+        0
+       ],
+       "breathe": [
+        1,
+        1
+       ],
+       "bob": 0,
+       "saccade": [
+        0,
+        0
+       ],
+       "rockp": 1,
+       "blink": 1,
+       "wrap": {
+        "mx": 0,
+        "side": 0,
+        "sy": 0,
+        "rot": 0
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 0,
+      "amplitude": 1,
+      "shake": 0.55,
+      "frame": {
+       "shake": [
+        0.341,
+        -0.18700000000000003
+       ],
+       "breathe": [
+        1.0164702346858994,
+        0.9865243534388095
+       ],
+       "bob": -0.1390103991001709,
+       "saccade": [
+        0,
+        0
+       ],
+       "rockp": 1,
+       "blink": 1,
+       "wrap": {
+        "mx": 0,
+        "side": 0,
+        "sy": 0,
+        "rot": 0
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 112,
+      "amplitude": 0.4,
+      "shake": 0.35,
+      "frame": {
+       "shake": [
+        0.217,
+        -0.119
+       ],
+       "breathe": [
+        1.0070703775306609,
+        0.9942151456567321
+       ],
+       "bob": -0.07181044198934393,
+       "saccade": [
+        0,
+        0
+       ],
+       "rockp": 0.7440247898289896,
+       "blink": 1,
+       "wrap": {
+        "mx": 0,
+        "side": 0,
+        "sy": 0,
+        "rot": 0
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 1234,
+      "amplitude": 1,
+      "shake": 0.55,
+      "frame": {
+       "shake": [
+        0.28914285714285864,
+        -0.16500000000000065
+       ],
+       "breathe": [
+        1.0216210696462262,
+        0.9823100339258148
+       ],
+       "bob": -0.7528667790060589,
+       "saccade": [
+        -1.568,
+        -1.2240000000000002
+       ],
+       "rockp": -0.7249387100885838,
+       "blink": 1,
+       "wrap": {
+        "mx": -0.034496,
+        "side": 0.01568,
+        "sy": -0.03672,
+        "rot": 1.7273088000000003
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 3619,
+      "amplitude": 1,
+      "shake": 0.18,
+      "frame": {
+       "shake": [
+        -0.07739999999999998,
+        0.0594
+       ],
+       "breathe": [
+        1.0001271561856342,
+        0.9998959631208448
+       ],
+       "bob": -0.8771663283843246,
+       "saccade": [
+        -0.294,
+        1.1560000000000001
+       ],
+       "rockp": 0.9931350345842767,
+       "blink": 1,
+       "wrap": {
+        "mx": -0.006468,
+        "side": 0.00294,
+        "sy": -0.03468,
+        "rot": -0.30654400000000004
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 5000,
+      "amplitude": 1,
+      "shake": 0.55,
+      "frame": {
+       "shake": [
+        -0.04871428571429122,
+        -0.03300000000000846
+       ],
+       "breathe": [
+        1.0086918853989923,
+        0.9928884574008245
+       ],
+       "bob": -0.1818380760378451,
+       "saccade": [
+        -1.96,
+        -0.20400000000000001
+       ],
+       "rockp": -0.9510907709234386,
+       "blink": 0.9838096255620136,
+       "wrap": {
+        "mx": -0.04312,
+        "side": 0.0196,
+        "sy": -0.00612,
+        "rot": 0.359856
+       }
+      }
+     }
+    ]
+   },
+   {
+    "seed": "  MIXED Case  ",
+    "options": {
+     "normalize": false
+    },
+    "seeds": {
+     "phase": 583,
+     "bob": 199,
+     "blink": 5266,
+     "blinkPhase": 4566,
+     "saccade": 6143,
+     "saccadePhase": 3410,
+     "lookX": 1.74,
+     "lookY": 1.54,
+     "lookMX": 1.74,
+     "lookMY": 1.54
+    },
+    "frames": [
+     {
+      "elapsedMilliseconds": 0,
+      "amplitude": 0,
+      "shake": 0,
+      "frame": {
+       "shake": [
+        0,
+        0
+       ],
+       "breathe": [
+        1,
+        1
+       ],
+       "bob": 0,
+       "saccade": [
+        0,
+        0
+       ],
+       "rockp": 1,
+       "blink": 1,
+       "wrap": {
+        "mx": 0,
+        "side": 0,
+        "sy": 0,
+        "rot": 0
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 0,
+      "amplitude": 1,
+      "shake": 0.55,
+      "frame": {
+       "shake": [
+        0.341,
+        -0.18700000000000003
+       ],
+       "breathe": [
+        1.0019515702743673,
+        0.9984032606846085
+       ],
+       "bob": -0.007306468767451674,
+       "saccade": [
+        -0.261,
+        1.309
+       ],
+       "rockp": 1,
+       "blink": 1,
+       "wrap": {
+        "mx": -0.005742,
+        "side": 0.00261,
+        "sy": -0.03927,
+        "rot": -0.308154
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 112,
+      "amplitude": 0.4,
+      "shake": 0.35,
+      "frame": {
+       "shake": [
+        0.217,
+        -0.119
+       ],
+       "breathe": [
+        1.0011200397069027,
+        0.9990836038761706
+       ],
+       "bob": -0.007236021162391717,
+       "saccade": [
+        -0.1044,
+        0.5236
+       ],
+       "rockp": 0.7440247898289896,
+       "blink": 1,
+       "wrap": {
+        "mx": -0.0022968,
+        "side": 0.001044,
+        "sy": -0.015708,
+        "rot": -0.1232616
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 1234,
+      "amplitude": 1,
+      "shake": 0.55,
+      "frame": {
+       "shake": [
+        0.28914285714285864,
+        -0.16500000000000065
+       ],
+       "breathe": [
+        1.0163450668953102,
+        0.9866267634492916
+       ],
+       "bob": -0.4033745489325066,
+       "saccade": [
+        1.305,
+        -1.2320000000000002
+       ],
+       "rockp": -0.7249387100885838,
+       "blink": 1,
+       "wrap": {
+        "mx": -0.028710000000000003,
+        "side": -0.013049999999999999,
+        "sy": -0.03696,
+        "rot": -1.4469840000000003
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 3619,
+      "amplitude": 1,
+      "shake": 0.18,
+      "frame": {
+       "shake": [
+        -0.07739999999999998,
+        0.0594
+       ],
+       "breathe": [
+        1.0109729064387019,
+        0.9910221674592439
+       ],
+       "bob": -1.0669182054330169,
+       "saccade": [
+        0,
+        0
+       ],
+       "rockp": 0.9931350345842767,
+       "blink": 1,
+       "wrap": {
+        "mx": 0,
+        "side": 0,
+        "sy": 0,
+        "rot": 0
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 5000,
+      "amplitude": 1,
+      "shake": 0.55,
+      "frame": {
+       "shake": [
+        -0.04871428571429122,
+        -0.03300000000000846
+       ],
+       "breathe": [
+        1.0000015360577745,
+        0.9999987432254573
+       ],
+       "bob": -0.4948944027431586,
+       "saccade": [
+        1.74,
+        0.15400000000000003
+       ],
+       "rockp": -0.9510907709234386,
+       "blink": 1,
+       "wrap": {
+        "mx": -0.038279999999999995,
+        "side": -0.0174,
+        "sy": -0.00462,
+        "rot": 0.241164
+       }
+      }
+     }
+    ]
+   },
+   {
+    "seed": "motion-overrides",
+    "options": {
+     "traits": {
+      "motion.phase": 0.125,
+      "motion.bob": 0.875,
+      "motion.blink": 0.25,
+      "motion.blinkPhase": 0.75,
+      "motion.saccade": 0.625,
+      "motion.saccadePhase": 0.375,
+      "motion.lookX": 0.5,
+      "motion.lookY": 0.25,
+      "motion.lookXFlip": 0.75,
+      "motion.lookYFlip": 0.25
+     }
+    },
+    "seeds": {
+     "phase": 350,
+     "bob": 2975,
+     "blink": 4250,
+     "blinkPhase": 3188,
+     "saccade": 6325,
+     "saccadePhase": 2372,
+     "lookX": 1.6,
+     "lookY": -1.02,
+     "lookMX": 1.6,
+     "lookMY": 1.02
+    },
+    "frames": [
+     {
+      "elapsedMilliseconds": 0,
+      "amplitude": 0,
+      "shake": 0,
+      "frame": {
+       "shake": [
+        0,
+        0
+       ],
+       "breathe": [
+        1,
+        1
+       ],
+       "bob": 0,
+       "saccade": [
+        0,
+        0
+       ],
+       "rockp": 1,
+       "blink": 1,
+       "wrap": {
+        "mx": 0,
+        "side": 0,
+        "sy": 0,
+        "rot": 0
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 0,
+      "amplitude": 1,
+      "shake": 0.55,
+      "frame": {
+       "shake": [
+        0.341,
+        -0.18700000000000003
+       ],
+       "breathe": [
+        1.0006845088120115,
+        0.9994399473356268
+       ],
+       "bob": -1.0657745593994183,
+       "saccade": [
+        1.6,
+        -0.10200000000000001
+       ],
+       "rockp": 1,
+       "blink": 1,
+       "wrap": {
+        "mx": -0.0352,
+        "side": -0.016,
+        "sy": -0.0030600000000000002,
+        "rot": -0.14687999999999998
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 112,
+      "amplitude": 0.4,
+      "shake": 0.35,
+      "frame": {
+       "shake": [
+        0.217,
+        -0.119
+       ],
+       "breathe": [
+        1.0004838555112425,
+        0.9996041182180744
+       ],
+       "bob": -0.4326688796327062,
+       "saccade": [
+        0.6400000000000001,
+        -0.0408
+       ],
+       "rockp": 0.7440247898289896,
+       "blink": 1,
+       "wrap": {
+        "mx": -0.014080000000000002,
+        "side": -0.0064,
+        "sy": -0.0012240000000000003,
+        "rot": -0.058752
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 1234,
+      "amplitude": 1,
+      "shake": 0.55,
+      "frame": {
+       "shake": [
+        0.28914285714285864,
+        -0.16500000000000065
+       ],
+       "breathe": [
+        1.0134657881287301,
+        0.9889825369855844
+       ],
+       "bob": -0.9716265281029729,
+       "saccade": [
+        -0.24,
+        -0.867
+       ],
+       "rockp": -0.7249387100885838,
+       "blink": 1,
+       "wrap": {
+        "mx": -0.00528,
+        "side": 0.0024000000000000002,
+        "sy": -0.02601,
+        "rot": 0.18768000000000004
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 3619,
+      "amplitude": 1,
+      "shake": 0.18,
+      "frame": {
+       "shake": [
+        -0.07739999999999998,
+        0.0594
+       ],
+       "breathe": [
+        1.0140758295701973,
+        0.9884834121698386
+       ],
+       "bob": -0.007836368029367003,
+       "saccade": [
+        -1.6,
+        0.153
+       ],
+       "rockp": 0.9931350345842767,
+       "blink": 1,
+       "wrap": {
+        "mx": -0.0352,
+        "side": 0.016,
+        "sy": -0.0045899999999999995,
+        "rot": -0.22032000000000002
+       }
+      }
+     },
+     {
+      "elapsedMilliseconds": 5000,
+      "amplitude": 1,
+      "shake": 0.55,
+      "frame": {
+       "shake": [
+        -0.04871428571429122,
+        -0.03300000000000846
+       ],
+       "breathe": [
+        1.0003444202393068,
+        0.9997182016223853
+       ],
+       "bob": -0.2740275241336583,
+       "saccade": [
+        -1.2800000000000002,
+        0.918
+       ],
+       "rockp": -0.9510907709234386,
+       "blink": 1,
+       "wrap": {
+        "mx": -0.028160000000000004,
+        "side": 0.0128,
+        "sy": -0.02754,
+        "rot": -1.0575360000000003
+       }
+      }
+     }
+    ]
+   }
+  ],
+  "morphs": [
+   {
+    "seed": "alain",
+    "from": "idle",
+    "to": "mad",
+    "durationMilliseconds": 300,
+    "samples": [
+     {
+      "progress": 0,
+      "eased": 0,
+      "pose": {
+       "esx": 1,
+       "esy": 1,
+       "tilt": 0,
+       "edy": 0,
+       "edx": 0,
+       "esx2": 0,
+       "esy2": 0,
+       "tilt2": 0,
+       "edy2": 0,
+       "lock": 0,
+       "heat": 0,
+       "shake": 0,
+       "rock": 0,
+       "bdy": 0
+      },
+      "head": "#d0d897",
+      "eye": "#0f1006"
+     },
+     {
+      "progress": 0.25,
+      "eased": 0.1462864251468035,
+      "pose": {
+       "esx": 1.124343461374783,
+       "esy": 0.8917480453913654,
+       "tilt": -4.827452029844516,
+       "edy": 0.058514570058721405,
+       "edx": 0.0877718550880821,
+       "esx2": 0,
+       "esy2": -0.004388592754404105,
+       "tilt2": 0.7314321257340175,
+       "edy2": 0,
+       "lock": 0.1462864251468035,
+       "heat": 0.09069758359101818,
+       "shake": 0.08045753383074193,
+       "rock": 0,
+       "bdy": 0.11702914011744281
+      },
+      "head": "#d4ce92",
+      "eye": "#0f1006"
+     },
+     {
+      "progress": 0.5,
+      "eased": 0.5534047658100446,
+      "pose": {
+       "esx": 1.470394050938538,
+       "esy": 0.590480473300567,
+       "tilt": -18.26235727173147,
+       "edy": 0.22136190632401787,
+       "edx": 0.33204285948602674,
+       "esx2": 0,
+       "esy2": -0.016602142974301338,
+       "tilt2": 2.767023829050223,
+       "edy2": 0,
+       "lock": 0.5534047658100446,
+       "heat": 0.34311095480222764,
+       "shake": 0.30437262119552455,
+       "rock": 0,
+       "bdy": 0.44272381264803573
+      },
+      "head": "#e1b383",
+      "eye": "#0f1006"
+     },
+     {
+      "progress": 0.75,
+      "eased": 0.9032064997020605,
+      "pose": {
+       "esx": 1.7677255247467514,
+       "esy": 0.33162719022047527,
+       "tilt": -29.805814490167997,
+       "edy": 0.36128259988082423,
+       "edx": 0.5419238998212362,
+       "esx2": 0,
+       "esy2": -0.027096194991061813,
+       "tilt2": 4.516032498510302,
+       "edy2": 0,
+       "lock": 0.9032064997020605,
+       "heat": 0.5599880298152775,
+       "shake": 0.4967635748361333,
+       "rock": 0,
+       "bdy": 0.7225651997616485
+      },
+      "head": "#eb9c76",
+      "eye": "#0f1006"
+     },
+     {
+      "progress": 1,
+      "eased": 1,
+      "pose": {
+       "esx": 1.85,
+       "esy": 0.26,
+       "tilt": -33,
+       "edy": 0.4,
+       "edx": 0.6,
+       "esx2": 0,
+       "esy2": -0.03,
+       "tilt2": 5,
+       "edy2": 0,
+       "lock": 1,
+       "heat": 0.62,
+       "shake": 0.55,
+       "rock": 0,
+       "bdy": 0.8
+      },
+      "head": "#ee9672",
+      "eye": "#0f1006"
+     }
+    ]
+   },
+   {
+    "seed": "expression-organic",
+    "from": "thinking",
+    "to": "idle",
+    "durationMilliseconds": 400,
+    "samples": [
+     {
+      "progress": 0,
+      "eased": 0,
+      "pose": {
+       "esx": 1.15,
+       "esy": 0.62,
+       "tilt": 0,
+       "edy": 4.2,
+       "edx": 0.4,
+       "esx2": 0.02,
+       "esy2": 0.06,
+       "tilt2": 0,
+       "edy2": -8.4,
+       "lock": 1,
+       "heat": 0,
+       "shake": 0,
+       "rock": 0.8,
+       "bdy": -0.4
+      },
+      "head": "#c8ded2",
+      "eye": "#07120d"
+     },
+     {
+      "progress": 0.25,
+      "eased": 0.12916190056878776,
+      "pose": {
+       "esx": 1.130625714914682,
+       "esy": 0.6690815222161394,
+       "tilt": 0,
+       "edy": 3.6575200176110916,
+       "edx": 0.34833523977248493,
+       "esx2": 0.017416761988624244,
+       "esy2": 0.052250285965872736,
+       "tilt2": 0,
+       "edy2": -7.315040035222183,
+       "lock": 0.8708380994312123,
+       "heat": 0,
+       "shake": 0,
+       "rock": 0.6966704795449699,
+       "bdy": -0.34833523977248493
+      },
+      "head": "#c8ded2",
+      "eye": "#07120d"
+     },
+     {
+      "progress": 0.5,
+      "eased": 0.5,
+      "pose": {
+       "esx": 1.075,
+       "esy": 0.81,
+       "tilt": 0,
+       "edy": 2.1,
+       "edx": 0.2,
+       "esx2": 0.01,
+       "esy2": 0.03,
+       "tilt2": 0,
+       "edy2": -4.2,
+       "lock": 0.5,
+       "heat": 0,
+       "shake": 0,
+       "rock": 0.4,
+       "bdy": -0.2
+      },
+      "head": "#c8ded2",
+      "eye": "#07120d"
+     },
+     {
+      "progress": 0.75,
+      "eased": 0.8708380994312122,
+      "pose": {
+       "esx": 1.0193742850853182,
+       "esy": 0.9509184777838606,
+       "tilt": 0,
+       "edy": 0.5424799823889089,
+       "edx": 0.05166476022751514,
+       "esx2": 0.002583238011375757,
+       "esy2": 0.007749714034127271,
+       "tilt2": 0,
+       "edy2": -1.0849599647778179,
+       "lock": 0.12916190056878785,
+       "heat": 0,
+       "shake": 0,
+       "rock": 0.10332952045503029,
+       "bdy": -0.05166476022751514
+      },
+      "head": "#c8ded2",
+      "eye": "#07120d"
+     },
+     {
+      "progress": 1,
+      "eased": 1,
+      "pose": {
+       "esx": 1,
+       "esy": 1,
+       "tilt": 0,
+       "edy": 0,
+       "edx": 0,
+       "esx2": 0,
+       "esy2": 0,
+       "tilt2": 0,
+       "edy2": 0,
+       "lock": 0,
+       "heat": 0,
+       "shake": 0,
+       "rock": 0,
+       "bdy": 0
+      },
+      "head": "#c8ded2",
+      "eye": "#07120d"
+     }
+    ]
+   }
+  ]
  },
  "cases": [
   {

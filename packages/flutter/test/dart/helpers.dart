@@ -7,10 +7,11 @@ import 'package:test/test.dart';
 
 /// The cross-language fixture, exported once from the TypeScript
 /// implementation at blobatar 2.4.0 by `tools/export-reference-vectors.ts`.
+/// It lives at the repository root and is shared with the Swift port.
 final Map<String, dynamic> vectors = loadVectors();
 
 Map<String, dynamic> loadVectors() {
-  final file = File('test/fixtures/reference-vectors.json');
+  final file = File('../../fixtures/blobatar-v2.4.0.json');
   return jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
 }
 
