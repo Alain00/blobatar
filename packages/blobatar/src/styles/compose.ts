@@ -97,7 +97,12 @@ export function compose(bands: Band[], fit: Fit) {
     };
   }
 
-  function render(l: ReturnType<typeof layout>, p: Palette, mo?: boolean): string {
+  /**
+   * `costume` is a season's marks, already serialized. It goes inside the
+   * motion groups so it moves with the head, and after the eyes, none of which
+   * it covers. Its wrapper is in the head colour; see `motion.css` for why.
+   */
+  function render(l: ReturnType<typeof layout>, p: Palette, mo?: boolean, costume?: string): string {
     const r2 = (v: number) => Math.round(v * 100) / 100;
     const eye = (e: Eye, i: number) => {
       const path = `<path d="${superellipse(e)}"/>`;
@@ -113,7 +118,8 @@ export function compose(bands: Band[], fit: Fit) {
       `</g>` +
       `<g fill="${p.eye}"${mo ? ` class="mo-eyes"` : ""}>` +
       l.eyes.map(eye).join("") +
-      `</g>`;
+      `</g>` +
+      (costume ? `<g fill="${p.head}">${costume}</g>` : "");
     return mo ? `<g class="mo-breathe"><g class="mo-bob">${body}</g></g>` : body;
   }
 

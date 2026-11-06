@@ -92,8 +92,12 @@ const ENTRIES: {
     // and a cube root — `fromHex` would have cost roughly twice as much again,
     // since nothing else in the core reaches the OKLab decode. Every entry
     // below that renders carries the same bytes for the same reason.
+    //
+    // Raised from 4480 by 90 B for seasons (measured +93): the `season` option
+    // reaching `resolve`, `dress` and the costume's slot in `render`. The
+    // drawing lives on the season value; see "blob + halloween".
     name: "blob only",
-    budget: 4480,
+    budget: 4570,
     external: [] as string[],
     source: `import { blobatar } from "../../src/blob";
              globalThis.x = blobatar(String(globalThis.seed));`,
@@ -101,15 +105,17 @@ const ENTRIES: {
   {
     // The barrel. Costs more than `blob only` above because it also carries the
     // colour and trait utilities, which a consumer who only renders never touches.
+    // Raised from 4470 by 90 B for seasons — see "blob only".
     name: "barrel",
-    budget: 4470,
+    budget: 4560,
     external: [],
     source: `import { blobatar } from "../../src/index";
              globalThis.x = blobatar(String(globalThis.seed));`,
   },
   {
+    // Raised from 4570 by 90 B for seasons — see "blob only".
     name: "uri",
-    budget: 4570,
+    budget: 4660,
     external: [],
     source: `import { blobatarUri } from "../../src/uri";
              globalThis.x = blobatarUri(String(globalThis.seed));`,
@@ -134,8 +140,9 @@ const ENTRIES: {
     // correct — a `var()` with nothing behind it makes `fill` inherit black.
     //
     // Raised from 5370 by 120 B for `backgroundColor` — see "blob only".
+    // Raised from 5490 by 90 B for seasons — see "blob only".
     name: "react",
-    budget: 5490,
+    budget: 5580,
     external: ["react"],
     source: `import { Blobatar } from "../../src/react";
              globalThis.x = Blobatar;`,
@@ -146,12 +153,25 @@ const ENTRIES: {
     // above — the delta is what a single pose actually costs.
     // Measured: +343 B for the first expression (the shared serializer and bake,
     // paid once) and +36 B for each one after it. Importing all three is 4098.
+    // Raised from 4810 by 90 B for seasons — see "blob only".
     name: "blob + happy",
-    budget: 4810,
+    budget: 4900,
     external: [],
     source: `import { blobatar } from "../../src/blob";
              import { happy } from "../../src/expression";
              globalThis.x = blobatar(String(globalThis.seed), { expression: happy });`,
+  },
+  {
+    // Measured against "blob only" above, like "blob + happy": the delta is
+    // what a costume costs. Measured: 6107, ~1.6 KB for the serializer,
+    // `frame()`, the pumpkin and ghost marks (`edge()` is ~230 B of that) and
+    // `fadeHex`.
+    name: "blob + halloween",
+    budget: 6150,
+    external: [],
+    source: `import { blobatar } from "../../src/blob";
+             import { halloween } from "../../src/seasonal";
+             globalThis.x = blobatar(String(globalThis.seed), { season: halloween });`,
   },
   {
     // The Vue adapter, measured against "react" above. Same two rendering
@@ -174,8 +194,9 @@ const ENTRIES: {
     //
     // Raised from 5650 by 70 B for `backgroundColor` — see "blob only" — plus
     // the runtime prop declaration, keeping the slack described above.
+    // Raised from 5720 by 110 B for seasons, likewise.
     name: "vue",
-    budget: 5720,
+    budget: 5830,
     external: ["vue"],
     source: `import { Blobatar } from "../../src/vue";
              globalThis.x = Blobatar;`,

@@ -37,6 +37,8 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Blobatar, MorphingBlobatar } from "@blobatar/react-native";
 import { AnimatedBlobatar } from "@blobatar/react-native/animated";
+import { _posed } from "blobatar/internal";
+import { christmas, halloween } from "blobatar/seasonal";
 import {
   happy,
   love,
@@ -75,7 +77,8 @@ function matrix(list: string): M {
   let m = I;
   for (const [, fn, args] of list.matchAll(/([a-zA-Z]+)\(([^)]*)\)/g)) {
     const n = args!.trim().split(/[\s,]+/).map(Number);
-    if (fn === "translate") m = times(m, [1, 0, 0, 1, n[0]!, n[1] ?? 0]);
+    if (fn === "matrix") m = times(m, n as M);
+    else if (fn === "translate") m = times(m, [1, 0, 0, 1, n[0]!, n[1] ?? 0]);
     else if (fn === "scale") m = times(m, [n[0]!, 0, 0, n[1] ?? n[0]!, 0, 0]);
     else if (fn === "rotate") {
       const t = (n[0]! * Math.PI) / 180;
@@ -179,9 +182,10 @@ function sameMatrix(a: M, b: M, why: string) {
  * component that stopped nesting them would fail here instead of silently
  * comparing the wrong primitives.
  */
-function halves(prims: Prim[], nEyes: number) {
+function halves(prims: Prim[], nEyes: number, costume = 0) {
   const deep = prims.filter(p => p.depth > (prims.some(q => q.depth > 3) ? 4 : 1));
-  const eyes = deep.length ? deep : prims.slice(prims.length - nEyes);
+  const end = prims.length - costume;
+  const eyes = deep.length ? deep : prims.slice(end - nEyes, end);
   const rest = prims.filter(p => !eyes.includes(p));
   return { eyes, rest };
 }
@@ -267,8 +271,11 @@ function agree(seed: string, name: string, props: Record<string, unknown>) {
   const why = `${seed} ${name}`;
 
   expect(got.length, why).toBe(want.length);
+  // A still blobatar is flat, so its eyes are found by position: ahead of a
+  // season's costume, which comes last.
+  const costume = _posed(seed, props).costume.length;
   const a = halves(got, 2);
-  const b = halves(want, 2);
+  const b = halves(want, 2, costume);
   expect(a.eyes.length, why).toBe(b.eyes.length);
   expect(a.rest.length, why).toBe(b.rest.length);
 
@@ -347,6 +354,9 @@ describe("it takes the same options the still one does", () => {
     { palette: { head: "#123456", eye: "#fedcba", bg: "#0a0a0a" } },
     { title: "Alain" },
     { normalize: false },
+    { season: halloween },
+    { season: halloween, expression: mad },
+    { season: christmas },
   ];
   for (const o of OPTS) {
     test(JSON.stringify(o), () => {

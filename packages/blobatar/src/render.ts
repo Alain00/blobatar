@@ -1,6 +1,7 @@
 import type { Animate } from "./animate";
 import { palette as buildPalette, type Palette } from "./color";
 import type { Expression, Posable } from "./expression";
+import type { Season } from "./seasonal";
 import { superellipse } from "./shape";
 import { traits, type TraitOverrides, type Traits } from "./traits";
 
@@ -105,6 +106,21 @@ export interface BlobatarOptions {
    * `idle` emits byte-identical markup to omitting the option.
    */
   expression?: Expression;
+  /**
+   * A costume for a date. Import one from `blobatar/seasonal`, or let
+   * `seasonNow()` there pick the one that is on:
+   *
+   * ```ts
+   * import { seasonNow } from "blobatar/seasonal";
+   * blobatar(name, { season: seasonNow() }); // undefined outside a season
+   * ```
+   *
+   * Passed as a value for the reason `expression` is: a season you do not
+   * import costs nothing, and nothing here reads the clock. See
+   * `blobatar/seasonal` for what a season may change; an explicit `palette`
+   * still wins. Omitting it renders byte-identically.
+   */
+  season?: Season;
 }
 
 export interface Style<L> {
@@ -115,7 +131,7 @@ export interface Style<L> {
    * class inside this string is a class inside `dangerouslySetInnerHTML`. See
    * `makeParts`.
    */
-  render(l: L, p: Palette, mo?: boolean): string;
+  render(l: L, p: Palette, mo?: boolean, costume?: string): string;
   background: boolean | "square" | "circle" | "squircle";
 }
 
@@ -164,14 +180,22 @@ export function resolve(
   opts: BlobatarOptions,
   plate: Style<unknown>["background"],
 ) {
-  const t = traits(seed, opts.normalize ?? true, opts.traits);
+  const s = opts.season;
+  // The season's pins go *under* the caller's: a caller who narrowed the
+  // silhouette keeps their narrowing in costume.
+  const t = traits(seed, opts.normalize ?? true, { ...s?.traits, ...opts.traits });
+  const hue = opts.hue ?? t.num("hue", 0, 360);
+  // The colour it wears goes *over* `hue`/`tone`, worked out from the hue the
+  // plain render would use: a pumpkin is orange whatever the brand hue, and a
+  // ghost is a pastel of it. `palette` below still wins over both, by contract.
+  const w = s?.wear?.(t, hue);
   return {
     t,
     palette: {
       ...buildPalette(
-        opts.hue ?? t.num("hue", 0, 360),
+        w?.hue ?? hue,
         opts.contrast ?? true,
-        opts.tone ?? t("tone"),
+        w?.tone ?? opts.tone ?? t("tone"),
         (opts.background ?? plate) === false ? undefined : opts.backgroundColor,
       ),
       ...opts.palette,
@@ -255,14 +279,20 @@ export function makeBlobatar<L>(style: Style<L>) {
     const { t, palette } = resolve(name, opts, style.background);
     const p = tinted(palette, opts.expression);
     const dim = opts.size ? ` width="${opts.size}" height="${opts.size}"` : "";
-    const pose = posed(style.layout(t), opts);
+    const l = style.layout(t);
+    const pose = posed(l, opts);
+    // The costume comes off the *unposed* layout and the resting palette, as
+    // on the animated path, which never bakes a pose in. Its marks in the head
+    // colour inherit the tinted one from their wrapper.
+    const c = opts.season?.dress?.(l as never, palette, t, pose.wrap);
     // The pose wraps the figure but not the backdrop, for the same reason the
     // motion groups sit inside `style.render` — a plate that scales and leans
-    // with the creature stops being a plate.
+    // with the creature stops being a plate. The season's transform wraps the
+    // same thing, for the same reason, composed into the same `<g>`.
     const body =
       label(opts) +
       plate(backdrop(style, opts, p)) +
-      wrap(style.render(pose.l, p), pose.wrap);
+      wrap(style.render(pose.l, p, false, c?.markup), c ? c.wrap : pose.wrap);
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"${dim}>${body}</svg>`;
   };
 }
@@ -298,14 +328,17 @@ export function makeParts<L>(style: Style<L>) {
   ) => {
     const { t, palette: p } = resolve(name, opts, style.background);
     const mo = motion?.(t, p);
-    const pose = posed(style.layout(t), opts, mo);
+    const l = style.layout(t);
+    const pose = posed(l, opts, mo);
+    // The costume does not vary with the expression, so it may sit in `inner`.
+    const c = opts.season?.dress?.(l as never, p, t, pose.wrap);
 
     return {
       /** Goes on the root `<g>`, which the caller renders. */
       cls: mo?.cls,
       bg: backdrop(style, opts, p),
       /** Everything below the root `<g>`. Free of both of the above. */
-      inner: wrap(style.render(pose.l, p, !!mo), pose.wrap),
+      inner: wrap(style.render(pose.l, p, !!mo, c?.markup), c ? c.wrap : pose.wrap),
       vars: mo?.vars,
     };
   };

@@ -12,7 +12,7 @@
  * `scripts/build.ts` for why a library has to do that itself.
  */
 
-import { useEffect, useMemo, useRef, type ComponentType } from "react";
+import { useEffect, useMemo, useRef, type ComponentType, type ReactNode } from "react";
 import { poseTransforms, _posed, type BlobatarOptions, type Pose } from "blobatar/internal";
 import { idleSeeds, type IdleFrame } from "blobatar/idle";
 import Reanimated, {
@@ -24,7 +24,7 @@ import Reanimated, {
   withTiming,
 } from "react-native-reanimated";
 import { G, Path, type GProps, type SvgProps } from "react-native-svg";
-import { Body, Frame, split, useMorph, type BlobatarProps } from "./parts";
+import { Body, Costume, Frame, split, useMorph, type BlobatarProps } from "./parts";
 import { bobT, breatheT, eyesT, glanceT, idleFrame, rockT, rootT, type Mat } from "./worklets";
 
 /**
@@ -158,43 +158,54 @@ function Animated({
           plate that breathes and bobs with the creature stops being a plate. */}
       {figure.bg ? <Path d={figure.bg.d} fill={figure.bg.fill} /> : null}
       <AG animatedProps={rootP}>
-        <AG animatedProps={breatheP}>
-          {/*
-            The one animated group that carries a static `transform` as well,
-            and the reason is the seam between the two threads. React owns the
-            props on render and the UI thread owns them between renders, so a
-            re-render (which the morph does on every frame of its 300ms) drops
-            each group back to what React last said. For every other group that
-            is the identity, which is exactly what the still renderer draws, so
-            the worst case is one frame of a motionless blobatar. The bob is
-            different: its matrix also carries the pose's own lift, and
-            forgetting that for a frame would drop the body rather than merely
-            stop it. So the still lift is passed the way `Blobatar` passes it,
-            as a string React parses, and the loop writes over it.
-          */}
-          <AG animatedProps={bobP} transform={`translate(0 ${bdy})`}>
-            <Body marks={figure.marks} fill={shown.fill.head} />
-            <AG animatedProps={eyesP}>
-              {figure.eyes.map((m, i) => (
-                <Eye
-                  key={i}
-                  d={m.d}
-                  fill={shown.fill.eye}
-                  pose={t.eyes[i]!}
-                  frame={frame}
-                  rock={rock}
-                  edy2={edy2}
-                  at={figure.eyeFrames[i]!}
-                  side={i ? 1 : -1}
-                />
-              ))}
+        {/*
+          The season's fit, outside the breathe and the bob as on the web; a
+          group only when there is one.
+        */}
+        <Fit transform={figure.fit}>
+          <AG animatedProps={breatheP}>
+            {/*
+              The one animated group that carries a static `transform` as well,
+              and the reason is the seam between the two threads. React owns the
+              props on render and the UI thread owns them between renders, so a
+              re-render (which the morph does on every frame of its 300ms) drops
+              each group back to what React last said. For every other group that
+              is the identity, which is exactly what the still renderer draws, so
+              the worst case is one frame of a motionless blobatar. The bob is
+              different: its matrix also carries the pose's own lift, and
+              forgetting that for a frame would drop the body rather than merely
+              stop it. So the still lift is passed the way `Blobatar` passes it,
+              as a string React parses, and the loop writes over it.
+            */}
+            <AG animatedProps={bobP} transform={`translate(0 ${bdy})`}>
+              <Body marks={figure.marks} fill={shown.fill.head} />
+              <AG animatedProps={eyesP}>
+                {figure.eyes.map((m, i) => (
+                  <Eye
+                    key={i}
+                    d={m.d}
+                    fill={shown.fill.eye}
+                    pose={t.eyes[i]!}
+                    frame={frame}
+                    rock={rock}
+                    edy2={edy2}
+                    at={figure.eyeFrames[i]!}
+                    side={i ? 1 : -1}
+                  />
+                ))}
+              </AG>
+              <Costume marks={figure.costume} from={figure.fill.head} to={shown.fill.head} />
             </AG>
           </AG>
-        </AG>
+        </Fit>
       </AG>
     </Frame>
   );
 }
+
+/** `children` under a static transform when there is one, bare otherwise. */
+const Fit = ({ transform, children }: { transform: string; children: ReactNode }) =>
+  transform ? <G transform={transform}>{children}</G> : <>{children}</>;
 
 /**
  * One eye, and the three levels it needs.

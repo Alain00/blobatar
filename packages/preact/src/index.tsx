@@ -75,6 +75,7 @@ export function Blobatar({
   title,
   animate,
   expression,
+  season,
   traits,
   elementRef,
   ...rest
@@ -93,6 +94,7 @@ export function Blobatar({
     contrast,
     title,
     expression,
+    season,
     traits,
   };
 

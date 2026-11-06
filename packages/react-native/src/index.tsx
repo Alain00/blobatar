@@ -51,7 +51,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { _marks, _posed, poseTransforms, type BlobatarOptions } from "blobatar/internal";
 import { Circle, G, Path, type SvgProps } from "react-native-svg";
-import { Body, Frame, split, useMorph, type BlobatarProps } from "./parts";
+import { Body, Costume, Frame, split, useMorph, type BlobatarProps } from "./parts";
 
 export type { BlobatarProps };
 
@@ -94,9 +94,9 @@ function Still({
         `transform` is the pose's body wrap and it is load-bearing rather than
         decorative. `expression.bake` returns a `translate(0 N)` for any pose
         that shifts the body, and drawing the marks without it puts every posed
-        blobatar in the wrong place. It is the only transform in the figure: an
-        eye's rotation is baked into the points of its path, not carried as an
-        attribute.
+        blobatar in the wrong place. It is the only transform in the figure (a
+        season's fit is composed into it): an eye's rotation is baked into the
+        points of its path, not carried as an attribute.
       */}
       {figure.transform ? <G transform={figure.transform}>{body}</G> : body}
     </Frame>
@@ -174,15 +174,19 @@ function Morphing({
         `_marks` emits nothing. That is not an oversight and core's
         `poseTransforms` documents it: `bdy` passes through nonzero between two
         poses that both sit at zero, and a group that appears mid-morph is a
-        reparent rather than a translate.
+        reparent rather than a translate. A season's `fit` goes ahead of it in
+        the same list, as `_marks` composes them: a second group would deepen
+        every mark by one, and the harness tells the eyes from the body by
+        depth.
       */}
-      <G transform={t.wrap}>
+      <G transform={figure.fit ? `${figure.fit} ${t.wrap}` : t.wrap}>
         <Body marks={figure.marks} fill={shown.fill.head} />
         {figure.eyes.map((m, i) => (
           <G key={i} transform={t.eyes[i]}>
             <Path d={m.d} fill={shown.fill.eye} />
           </G>
         ))}
+        <Costume marks={figure.costume} from={figure.fill.head} to={shown.fill.head} />
       </G>
     </Frame>
   );

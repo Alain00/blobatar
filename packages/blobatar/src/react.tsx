@@ -78,13 +78,17 @@ export function Blobatar({
   title,
   animate,
   expression,
+  season,
   traits,
   ...rest
 }: BlobatarProps) {
   // Pulled out explicitly like every other option, because what is left in
   // `rest` goes straight onto the DOM element — a `traits` object spread onto
   // an `<img>` is a React warning per blobatar.
-  const opts = { size, background, backgroundColor, palette, hue, tone, normalize, contrast, title, expression, traits };
+  const opts = {
+    size, background, backgroundColor, palette, hue, tone, normalize, contrast, title, expression,
+    season, traits,
+  };
 
   // Both branches are hooks-stable: `animate` changing swaps the element type,
   // which remounts anyway.

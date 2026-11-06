@@ -5,11 +5,12 @@ import {
   backdrop, makeBlobatar, makeParts, posed, resolve, tinted,
   type BlobatarOptions,
 } from "./render";
+import type { Season } from "./seasonal";
 import { style } from "./styles/blob";
 import { marks, type Layout, type Mark } from "./styles/compose";
 import type { Traits } from "./traits";
 
-export type { BlobatarOptions, Animate, Expression, Mark };
+export type { BlobatarOptions, Animate, Expression, Mark, Season };
 
 /**
  * Renders a deterministic blobatar as SVG markup.
@@ -100,7 +101,9 @@ export function _parts(name: string, opts: BlobatarOptions = {}) {
  * shifts the body, and a caller that draws the marks without it puts every
  * posed blobatar in the wrong place. It is the *only* transform: an eye's
  * rotation is baked into the points of its path by `superellipse`, not carried
- * as an attribute. Empty string when there is no pose.
+ * as an attribute. Empty string when there is no pose. A season's fit is
+ * composed into the same string, ahead of the pose, and its costume comes back
+ * as the tail of `marks`, after the eyes.
  */
 export function _marks(name: string, opts: BlobatarOptions = {}): {
   bg: ReturnType<typeof backdrop>;
@@ -109,13 +112,20 @@ export function _marks(name: string, opts: BlobatarOptions = {}): {
 } {
   const { t, palette } = resolve(name, opts, style.background);
   const p = tinted(palette, opts.expression);
-  const pose = posed(style.layout(t), opts);
+  const l = style.layout(t) as Layout;
+  const pose = posed(l, opts);
+  // Off the resting palette, as every path dresses, with the head colour
+  // swapped for the tinted one as the string path's wrapper does.
+  const c = opts.season?.dress?.(l, palette, t, pose.wrap);
   return {
     // Outside the pose wrap, matching `makeBlobatar`. A plate that leans and
     // scales with the creature stops being a plate.
     bg: backdrop(style, opts, p),
-    transform: pose.wrap,
-    marks: marks(pose.l as Layout, p),
+    transform: c ? c.wrap : pose.wrap,
+    marks: [
+      ...marks(pose.l, p),
+      ...(c?.marks.map(m => (m.fill === palette.head ? { ...m, fill: p.head! } : m)) ?? []),
+    ],
   };
 }
 
@@ -156,6 +166,11 @@ export function _marks(name: string, opts: BlobatarOptions = {}): {
  *
  * `pose` is `undefined` for no expression, which `lerpPose` reads as idle.
  *
+ * `costume` is the season's marks, drawn after the eyes in their own fills,
+ * and `fit` its transform, applied *outside* the pose wrap. Both are empty
+ * without a season. They are kept apart from `marks`, which a morphing
+ * renderer paints in the travelling head colour.
+ *
  * `expr` is the `.mo-expr` predicate, computed here rather than by the caller
  * because there is already a copy of it in `motion` above and two would drift.
  * It answers "is the blobatar wearing an expression at all", which is what
@@ -177,6 +192,7 @@ export function _posed(name: string, opts: BlobatarOptions = {}) {
   const all = marks(l, palette);
   const e = opts.expression;
   const hot = e?.tint ? e.tint(palette, e.p) : null;
+  const c = opts.season?.dress?.(l, palette, t, "");
   // The eyes are the tail of the list, and `test/morph.test.ts` holds `marks()`
   // to that rather than leaving it as an assumption two files apart.
   const cut = all.length - l.eyes.length;
@@ -197,6 +213,8 @@ export function _posed(name: string, opts: BlobatarOptions = {}) {
     expr: !!e && (!!Object.keys(e.vars(e.p)).length || !!e.tint),
     fill: { head: palette.head!, eye: palette.eye! },
     hot: hot ? { head: hot.head!, eye: hot.eye! } : null,
+    costume: c?.marks ?? [],
+    fit: c?.wrap ?? "",
   };
 }
 
@@ -221,10 +239,15 @@ export function _layout(name: string, opts: BlobatarOptions = {}) {
   // the pose itself rather than parsing a matrix back out.
   const e = opts.expression;
   const posed = e ? e.bake(l as never, e.p).l : l;
+  const c = opts.season?.dress?.(l, palette, t, "");
   return {
     // Tinted here too, so a colour assertion can read the same numbers the
     // static renderer paints rather than the ramp they came from.
     palette: (e?.tint ? e.tint(palette as Palette, e.p) : palette) as Palette,
     ...posed,
+    // The costume and its fit, so a test can hold a hat to the same frame and
+    // eye boxes the body is held to.
+    costume: c?.marks ?? [],
+    fit: c?.wrap ?? "",
   };
 }

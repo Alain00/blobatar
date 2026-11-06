@@ -4,6 +4,7 @@ import type { Layout } from "./styles/compose";
 import type { Traits } from "./traits";
 
 export type { BlobatarOptions };
+export type { Season } from "./seasonal";
 export type { TraitOverrides } from "./traits";
 
 /**

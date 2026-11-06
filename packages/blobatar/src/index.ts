@@ -4,6 +4,7 @@ export {
   type Animate,
   type BlobatarOptions,
   type Expression,
+  type Season,
 } from "./blobatar";
 export {
   palette,

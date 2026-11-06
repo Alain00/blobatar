@@ -48,6 +48,7 @@ const ENTRIES = [
   "src/blob.ts",
   "src/uri.ts",
   "src/expression.ts",
+  "src/seasonal.ts",
   "src/idle.ts",
   "src/gaze.ts",
   "src/internal.ts",

@@ -13,6 +13,7 @@ import {
   wink,
 } from "../../src/expression";
 import type { BlobatarOptions } from "../../src/render";
+import { christmas, halloween } from "../../src/seasonal";
 import { traits } from "../../src/traits";
 
 const TEMPLATES: ((i: number) => string)[] = [
@@ -53,6 +54,16 @@ const OPTION_CASES: [string, BlobatarOptions][] = [
     idle, happy, sad, mad, surprised, wink, sleepy, smug, unsure, scared, love, shy, sick,
     thinking,
   }).map(([name, e]) => [`expression:${name}`, { expression: e }] as [string, BlobatarOptions]),
+  // Seasons: the costume, the colour it wears, and its fit, over the sweep.
+  // Both picks of Halloween come up across twelve seeds; each is pinned below
+  // so the fixture names it.
+  ["season:halloween", { season: halloween }],
+  ["season:halloween:pumpkin", { season: halloween, traits: { "season.pick": 0.1 } }],
+  ["season:halloween:ghost", { season: halloween, traits: { "season.pick": 0.9 } }],
+  ["season:christmas", { season: christmas }],
+  ["season:christmas:bearded", { season: christmas, traits: { "season.beard": 0.1 } }],
+  ["season:christmas+happy", { season: christmas, expression: happy }],
+  ["season:halloween+mad", { season: halloween, expression: mad }],
 ];
 
 /** Midpoints of gen2's bands, duplicated deliberately to catch moved bands. */
@@ -83,6 +94,9 @@ export function markup(): [string, string][] {
     ["sized", blobatar("alain", { size: 64 })],
     ["configured", blobatar("alain", { traits: { shape: 0.96, "eye.ratio": 0, hue: 0.5 } })],
     ["astral", blobatar("🦊")],
+    ["pumpkin", blobatar("alain", { season: halloween, traits: { "season.pick": 0.1 } })],
+    ["ghost", blobatar("alain", { season: halloween, traits: { "season.pick": 0.9 } })],
+    ["santa", blobatar("alain", { season: christmas, traits: { "season.beard": 0.1 } })],
   );
   return out;
 }
