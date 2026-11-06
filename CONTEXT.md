@@ -288,6 +288,15 @@ _Avoid_: mood, emotion, reaction, state. _Mood_ and _emotion_ describe the
 creature; an expression is what is drawn. _Reaction_ implies the library takes
 it away again, which it does not.
 
+**Season**:
+A costume for a date (Halloween, Christmas), passed in as a value from
+`blobatar/seasonal` like an expression, so the ones nobody imports do not ship.
+A season may narrow traits under the caller's own, set the hue and tone over
+`hue`/`tone`, draw marks after the eyes, and fit the figure to make room. It
+never reads the clock: `seasonNow()` is the calendar, and the consumer calls it.
+_Avoid_: theme (a palette the consumer owns), skin (it replaces the figure),
+holiday mode, and `seasonal: true`, which would put a clock in the renderer.
+
 **Pose**:
 What an expression resolves to — the geometry of the eyes, a rigid offset for
 the creature, a tremor amplitude, and how far the palette runs toward its hot

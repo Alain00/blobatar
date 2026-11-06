@@ -173,6 +173,7 @@ several hundred blobatars on one page cannot produce id collisions.
 | `title`           | —       | Adds a `<title>` for screen readers.                                    |
 | `animate`         | —       | `"hover"` or `"always"`. See below — it changes how the blobatar renders. |
 | `expression`      | `idle`  | One of fourteen poses, imported as a value. See below.                  |
+| `season`          | —       | A costume for a date, imported as a value or picked by `seasonNow()`. See below. |
 
 ## Configuring
 
@@ -484,6 +485,49 @@ Expressions are decorative and do not reach assistive technology: `title` names
 who the blobatar is and does not change with the pose. Under reduced motion the
 pose is adopted instantly at full strength — the morph is removed, the
 expression is not.
+
+## Seasons
+
+```ts
+import { blobatar } from "blobatar";
+import { seasonNow } from "blobatar/seasonal";
+
+blobatar(user.email, { season: seasonNow() });
+```
+
+A season dresses the blobatar for a date. Keep that line in and the figure is a
+pumpkin or a ghost around Halloween, wears a Santa hat through Christmas, and
+is itself the rest of the year: `seasonNow()` returns `undefined` outside a
+season, and `undefined` is no costume at all.
+
+| Season      | Window         | Costume                                     |
+| ----------- | -------------- | ------------------------------------------- |
+| `halloween` | 24 Oct – 1 Nov | a pumpkin or a ghost, one per name          |
+| `christmas` | 10 – 26 Dec    | a Santa hat, and a beard for half the names |
+
+`seasonNow(date = new Date())` is the only function here that reads a date,
+and you call it, so a server can pin one per request and a test can pin one at
+all. `blobatar()` sees only the season you pass, which keeps a seasonal render
+deterministic and cacheable. To pin a season regardless of the date, import
+`halloween` or `christmas`. A season you don't import costs nothing; one you do
+costs about 1.6 KB gzipped.
+
+Halloween keeps to four silhouettes (round, organic, boxy and cloud) and stands
+the body nearly upright, so some names change shape for the week. Names with a
+warm hue tend to become pumpkins and cool ones ghosts, and a cloud is always a
+ghost. A pumpkin is orange whatever your `hue`; a ghost is a pastel of it. The colours
+go through the usual ramp, so the contrast guarantee holds. Your own `traits`
+win over the season's narrowing, and `palette` wins over its colours. The look
+is the trait `season.pick` and the beard is `season.beard`, so both can be
+pinned:
+
+```ts
+import { halloween } from "blobatar/seasonal";
+
+blobatar(name, { season: halloween, traits: { "season.pick": 0.9 } }); // a ghost
+```
+
+Omitting `season` renders byte-identical markup to 2.8.
 
 ## How it works
 
