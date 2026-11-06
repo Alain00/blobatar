@@ -78,7 +78,7 @@
 import { serializeVars as serialize } from "./animate";
 
 export { _layout, _marks, _parts, _posed } from "./blobatar";
-export type { Animate, BlobatarOptions, Expression, Mark } from "./blobatar";
+export type { Animate, BlobatarOptions, Expression, Mark, Season } from "./blobatar";
 export { fadeHex } from "./color";
 export type { Palette } from "./color";
 export { lerpPose, poseTransforms } from "./morph";

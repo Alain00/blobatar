@@ -40,6 +40,9 @@ titled	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><title>Alai
 sized	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="64" height="64"><g fill="#d0d897"><path d="M88.1 50.49C88.1 73.31 73.75 87.6 50.83 87.6C27.91 87.6 13.56 73.31 13.56 50.49C13.56 27.67 27.91 13.39 50.83 13.39C73.75 13.39 88.1 27.67 88.1 50.49Z"/></g><g fill="#0f1006"><path d="M41.86 50.24C39.96 59.57 39.93 59.62 36.16 58.86C32.39 58.09 32.38 58.03 34.28 48.7C36.17 39.36 36.21 39.31 39.97 40.08C43.74 40.84 43.75 40.9 41.86 50.24Z"/><path d="M64.59 48.75C62.81 57.79 62.78 57.85 59.55 57.21C56.33 56.57 56.32 56.51 58.1 47.47C59.89 38.42 59.92 38.37 63.14 39.01C66.37 39.64 66.38 39.7 64.59 48.75Z"/></g></svg>
 configured	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#90e4d3"><circle cx="52.44" cy="76.6" r="6.25"/><circle cx="31.42" cy="68.02" r="6.25"/><circle cx="25.02" cy="46.25" r="6.25"/><circle cx="38.06" cy="27.67" r="6.25"/><circle cx="60.71" cy="26.27" r="6.25"/><circle cx="75.92" cy="43.12" r="6.25"/><circle cx="72.24" cy="65.51" r="6.25"/><path d="M76.92 50.49C76.92 66.47 66.88 76.46 50.83 76.46C34.79 76.46 24.74 66.47 24.74 50.49C24.74 34.52 34.79 24.52 50.83 24.52C66.88 24.52 76.92 34.52 76.92 50.49Z"/></g><g fill="#051210"><path d="M44.55 50.31C43.53 55.32 43.51 55.35 40.87 54.82C38.23 54.28 38.22 54.25 39.24 49.24C40.26 44.23 40.28 44.2 42.92 44.73C45.56 45.27 45.57 45.3 44.55 50.31Z"/><path d="M60.46 49.27C59.51 54.13 59.49 54.15 57.23 53.71C54.97 53.26 54.96 53.23 55.92 48.38C56.88 43.52 56.9 43.49 59.16 43.94C61.41 44.38 61.42 44.42 60.46 49.27Z"/></g></svg>
 astral	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#dfc3fd"><circle cx="37.16" cy="49.96" r="20.18"/><circle cx="63.66" cy="49.96" r="20.18"/><path d="M37.16 29.78H63.66V70.14H37.16Z"/></g><g fill="#120d16"><path d="M45.57 51.11C45.15 59.11 45.09 59.23 41.68 59.05C38.28 58.87 38.23 58.75 38.65 50.75C39.08 42.75 39.13 42.63 42.54 42.81C45.95 42.99 45.99 43.11 45.57 51.11Z"/><path d="M63.24 51.37C62.91 58.35 62.87 58.45 60.19 58.33C57.5 58.2 57.47 58.1 57.8 51.12C58.13 44.14 58.17 44.04 60.85 44.16C63.53 44.29 63.57 44.39 63.24 51.37Z"/></g></svg>
+pumpkin	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="#c46d00"><path d="M88.1 50.49C88.1 73.31 73.75 87.6 50.83 87.6C27.91 87.6 13.56 73.31 13.56 50.49C13.56 27.67 27.91 13.39 50.83 13.39C73.75 13.39 88.1 27.67 88.1 50.49Z"/></g><g fill="#160d07"><path d="M41.86 50.24C39.96 59.57 39.93 59.62 36.16 58.86C32.39 58.09 32.38 58.03 34.28 48.7C36.17 39.36 36.21 39.31 39.97 40.08C43.74 40.84 43.75 40.9 41.86 50.24Z"/><path d="M64.59 48.75C62.81 57.79 62.78 57.85 59.55 57.21C56.33 56.57 56.32 56.51 58.1 47.47C59.89 38.42 59.92 38.37 63.14 39.01C66.37 39.64 66.38 39.7 64.59 48.75Z"/></g><g fill="#c46d00"><g fill="#4f7f2e"><path d="M54.93 13.66C53.74 19.01 52.52 20.29 49.31 19.58C46.1 18.86 45.54 17.18 46.73 11.83C47.92 6.48 49.14 5.2 52.35 5.91C55.56 6.62 56.12 8.3 54.93 13.66Z"/></g><g fill="#7fae4a"><path d="M48.9 14.28C48.36 15.49 45.88 15.56 43.35 14.44C40.83 13.31 39.22 11.42 39.76 10.21C40.3 9 42.78 8.93 45.31 10.05C47.83 11.17 49.44 13.07 48.9 14.28Z"/></g><g fill="#a15a01"><path d="M28.6 27.06Q15.42 50.49 28.6 73.92Q22.42 50.49 28.6 27.06Z"/><path d="M69.8 24.59Q82.98 50.49 69.8 76.39Q75.98 50.49 69.8 24.59Z"/></g></g></svg>
+ghost	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="matrix(1 0 0 1 0 -4.57)"><g fill="#a9e1b4"><path d="M88.1 50.49C88.1 73.31 73.75 87.6 50.83 87.6C27.91 87.6 13.56 73.31 13.56 50.49C13.56 27.67 27.91 13.39 50.83 13.39C73.75 13.39 88.1 27.67 88.1 50.49Z"/></g><g fill="#09120b"><path d="M41.86 50.24C39.96 59.57 39.93 59.62 36.16 58.86C32.39 58.09 32.38 58.03 34.28 48.7C36.17 39.36 36.21 39.31 39.97 40.08C43.74 40.84 43.75 40.9 41.86 50.24Z"/><path d="M64.59 48.75C62.81 57.79 62.78 57.85 59.55 57.21C56.33 56.57 56.32 56.51 58.1 47.47C59.89 38.42 59.92 38.37 63.14 39.01C66.37 39.64 66.38 39.7 64.59 48.75Z"/></g><g fill="#a9e1b4"><g fill="#c4c6d0"><path d="M15.87 66.55Q15.05 85.1 14.62 89.1Q27.66 100.97 40.71 89.1Q53.75 100.97 66.79 89.1Q79.84 100.97 92.88 89.1Q86.61 85.1 85.79 66.55Z"/></g><path d="M15.87 65.05Q15.05 83.6 14.62 87.6Q27.66 99.47 40.71 87.6Q53.75 99.47 66.79 87.6Q79.84 99.47 92.88 87.6Q86.61 83.6 85.79 65.05Z"/><circle cx="15.87" cy="73.4" r="5.22"/><circle cx="85.79" cy="73.4" r="5.22"/><g fill="#09120b"><circle cx="49.71" cy="65.3" r="4.25"/></g></g></g></svg>
+santa	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="matrix(0.91 0 0 0.91 4.5 8.2)"><g fill="#d0d897"><path d="M88.1 50.49C88.1 73.31 73.75 87.6 50.83 87.6C27.91 87.6 13.56 73.31 13.56 50.49C13.56 27.67 27.91 13.39 50.83 13.39C73.75 13.39 88.1 27.67 88.1 50.49Z"/></g><g fill="#0f1006"><path d="M41.86 50.24C39.96 59.57 39.93 59.62 36.16 58.86C32.39 58.09 32.38 58.03 34.28 48.7C36.17 39.36 36.21 39.31 39.97 40.08C43.74 40.84 43.75 40.9 41.86 50.24Z"/><path d="M64.59 48.75C62.81 57.79 62.78 57.85 59.55 57.21C56.33 56.57 56.32 56.51 58.1 47.47C59.89 38.42 59.92 38.37 63.14 39.01C66.37 39.64 66.38 39.7 64.59 48.75Z"/></g><g fill="#d0d897"><g fill="#c8102e"><path d="M22.75 18.37Q36.69 -5.31 58.17 -0.45Q79.92 2.22 84 12.69Q68.51 5.25 69.97 24.17Z"/></g><g fill="#c4c6d0"><path d="M84.38 26.13C83.98 29.39 76.6 29.4 50.32 26.18C24.04 22.95 16.88 21.15 17.28 17.89C17.68 14.62 25.06 14.61 51.34 17.84C77.62 21.07 84.78 22.86 84.38 26.13Z"/></g><g fill="#f7f7f7"><path d="M84.38 24.93C83.98 28.19 76.6 28.2 50.32 24.98C24.04 21.75 16.88 19.95 17.28 16.69C17.68 13.42 25.06 13.41 51.34 16.64C77.62 19.87 84.78 21.66 84.38 24.93Z"/></g><g fill="#c4c6d0"><circle cx="84" cy="13.89" r="5.2"/></g><g fill="#f7f7f7"><circle cx="84" cy="12.69" r="5.2"/></g><g fill="#c4c6d0"><path d="M20.27 67.55Q35.55 59.55 50.83 67.55Q66.11 59.55 81.39 67.55Q81.39 83.1 69.17 89.1Q63.05 96.1 56.94 89.1Q50.83 96.1 44.72 89.1Q38.61 96.1 32.5 89.1Q20.27 83.1 20.27 67.55Z"/></g><g fill="#f7f7f7"><path d="M20.27 67.55Q35.55 59.55 50.83 67.55Q66.11 59.55 81.39 67.55Q81.39 81.6 69.17 87.6Q63.05 94.6 56.94 87.6Q50.83 94.6 44.72 87.6Q38.61 94.6 32.5 87.6Q20.27 81.6 20.27 67.55Z"/></g></g></g></svg>
 
 [hashes]
 user-0	448a476f82612631
@@ -1069,6 +1072,13 @@ user-0 expression:love	324536bf2eb1f678
 user-0 expression:shy	35a0549c66034348
 user-0 expression:sick	71875872023f34d8
 user-0 expression:thinking	0b3990f7d6856f87
+user-0 season:halloween	dd9d77ba93b2ef4c
+user-0 season:halloween:pumpkin	ac5d8bb4eaef2002
+user-0 season:halloween:ghost	dd9d77ba93b2ef4c
+user-0 season:christmas	6b7244612bec60be
+user-0 season:christmas:bearded	4ccf13d621b344d2
+user-0 season:christmas+happy	67af0901ae9ed946
+user-0 season:halloween+mad	2cc6871babb8232c
 alain1@example.com bg:none	550c2c46cb9f376e
 alain1@example.com bg:square	990a2ccd22138c8f
 alain1@example.com bg:circle	e56357e0ff71a39d
@@ -1096,6 +1106,13 @@ alain1@example.com expression:love	b5b9f3d6fa49e122
 alain1@example.com expression:shy	e05dcd8bfd847680
 alain1@example.com expression:sick	7df34a70f24fe90c
 alain1@example.com expression:thinking	d9f803f3f9541ca6
+alain1@example.com season:halloween	9b518c4fb110464a
+alain1@example.com season:halloween:pumpkin	9b518c4fb110464a
+alain1@example.com season:halloween:ghost	892df6df65073949
+alain1@example.com season:christmas	e426d46e3a1b9605
+alain1@example.com season:christmas:bearded	e426d46e3a1b9605
+alain1@example.com season:christmas+happy	aed3f521a9d1c435
+alain1@example.com season:halloween+mad	353abf2507d224b3
 3c6ef3623c6ef3623c6ef3623c6ef362 bg:none	b80fed77fd59c1f3
 3c6ef3623c6ef3623c6ef3623c6ef362 bg:square	2e7cf440eaffab22
 3c6ef3623c6ef3623c6ef3623c6ef362 bg:circle	f8c7f656cfdb5e1f
@@ -1123,6 +1140,13 @@ alain1@example.com expression:thinking	d9f803f3f9541ca6
 3c6ef3623c6ef3623c6ef3623c6ef362 expression:shy	70aa2bfe2aa2b4c1
 3c6ef3623c6ef3623c6ef3623c6ef362 expression:sick	1dd2caa0b25a9338
 3c6ef3623c6ef3623c6ef3623c6ef362 expression:thinking	2a6d806f8993998b
+3c6ef3623c6ef3623c6ef3623c6ef362 season:halloween	de19c416a7157989
+3c6ef3623c6ef3623c6ef3623c6ef362 season:halloween:pumpkin	de19c416a7157989
+3c6ef3623c6ef3623c6ef3623c6ef362 season:halloween:ghost	5e207cf074f3e425
+3c6ef3623c6ef3623c6ef3623c6ef362 season:christmas	66476b0d13dab5db
+3c6ef3623c6ef3623c6ef3623c6ef362 season:christmas:bearded	66476b0d13dab5db
+3c6ef3623c6ef3623c6ef3623c6ef362 season:christmas+happy	d017d0be0c718b4a
+3c6ef3623c6ef3623c6ef3623c6ef362 season:halloween+mad	1c08fcac747ff3ce
 Team Rocket 3 bg:none	2ae5fc75e39f4d08
 Team Rocket 3 bg:square	5d64aa7374ea2371
 Team Rocket 3 bg:circle	277881480a548110
@@ -1150,6 +1174,13 @@ Team Rocket 3 expression:love	d30015ac4249917e
 Team Rocket 3 expression:shy	18fa4bec1daf2950
 Team Rocket 3 expression:sick	58e84df42c94a869
 Team Rocket 3 expression:thinking	55b542dfe40808a7
+Team Rocket 3 season:halloween	9c30b17257a7d85e
+Team Rocket 3 season:halloween:pumpkin	f4691f32e3092758
+Team Rocket 3 season:halloween:ghost	9c30b17257a7d85e
+Team Rocket 3 season:christmas	83840f04e0f49ea3
+Team Rocket 3 season:christmas:bearded	83840f04e0f49ea3
+Team Rocket 3 season:christmas+happy	b4ca0605ecb0f304
+Team Rocket 3 season:halloween+mad	d5e21b4064ac39af
 café-4 bg:none	fa14d1ee48670af8
 café-4 bg:square	77a4ab0f3c27d501
 café-4 bg:circle	ab2b599cc42bf651
@@ -1177,6 +1208,13 @@ café-4 expression:love	10b37baa1ccebd0b
 café-4 expression:shy	d90395a426c028ae
 café-4 expression:sick	f4ce409f79f4e253
 café-4 expression:thinking	818817c4a962f77b
+café-4 season:halloween	9d13527d466aaa53
+café-4 season:halloween:pumpkin	9d13527d466aaa53
+café-4 season:halloween:ghost	512756ca1166046f
+café-4 season:christmas	88a4b019876f97cb
+café-4 season:christmas:bearded	498f1169e8509a50
+café-4 season:christmas+happy	2a002662f78f8485
+café-4 season:halloween+mad	0db684ed04683d21
 Ünïcødé 5 bg:none	c4b49b58ada44ad0
 Ünïcødé 5 bg:square	b13d3c947862a4c0
 Ünïcødé 5 bg:circle	5d0861f883399dd7
@@ -1204,6 +1242,13 @@ café-4 expression:thinking	818817c4a962f77b
 Ünïcødé 5 expression:shy	aac17f158a2e6afc
 Ünïcødé 5 expression:sick	dd27e6570254e5c3
 Ünïcødé 5 expression:thinking	e38e8b7557ccad90
+Ünïcødé 5 season:halloween	7c0c148fbd08722d
+Ünïcødé 5 season:halloween:pumpkin	4f1571efcadf9c48
+Ünïcødé 5 season:halloween:ghost	7c0c148fbd08722d
+Ünïcødé 5 season:christmas	031f8f56e466d66f
+Ünïcødé 5 season:christmas:bearded	031f8f56e466d66f
+Ünïcødé 5 season:christmas+happy	b1f5dabf3c1fe42c
+Ünïcødé 5 season:halloween+mad	7e242d4a3e0bebda
 🦊6🌱 bg:none	8d2554f1e3a3a78e
 🦊6🌱 bg:square	45bcffbdb7e6fe37
 🦊6🌱 bg:circle	e15946db5ab84426
@@ -1231,6 +1276,13 @@ café-4 expression:thinking	818817c4a962f77b
 🦊6🌱 expression:shy	4b89af1645327b76
 🦊6🌱 expression:sick	6f7138ff8b35d10b
 🦊6🌱 expression:thinking	90cceba756913765
+🦊6🌱 season:halloween	a237b4e630629e49
+🦊6🌱 season:halloween:pumpkin	a237b4e630629e49
+🦊6🌱 season:halloween:ghost	6b351a30e9f6ef96
+🦊6🌱 season:christmas	5fbe4b973f0bf286
+🦊6🌱 season:christmas:bearded	5fbe4b973f0bf286
+🦊6🌱 season:christmas+happy	d1918f69d6b17961
+🦊6🌱 season:halloween+mad	3370b70350f3dbf8
 7 bg:none	ba4ce59fe151ebbc
 7 bg:square	1a489766f3959e2d
 7 bg:circle	dcf3eb627330ee06
@@ -1258,6 +1310,13 @@ café-4 expression:thinking	818817c4a962f77b
 7 expression:shy	49febccd0810029e
 7 expression:sick	88d5a99f0e1aeeaa
 7 expression:thinking	2cea7ef441b27563
+7 season:halloween	9640f0b5b3ca15f3
+7 season:halloween:pumpkin	e9e3c1f4c9d8f66a
+7 season:halloween:ghost	9640f0b5b3ca15f3
+7 season:christmas	2719e5a078339f91
+7 season:christmas:bearded	e3db8000a190bfbc
+7 season:christmas+happy	ea43c4b5413c56fa
+7 season:halloween+mad	9349d897ebca3236
 00000000-0000-4000-8000-000000000008 bg:none	8cb2f354ad1743b7
 00000000-0000-4000-8000-000000000008 bg:square	0bab668c9a66f0d6
 00000000-0000-4000-8000-000000000008 bg:circle	bdaedb9056c9142e
@@ -1285,6 +1344,13 @@ café-4 expression:thinking	818817c4a962f77b
 00000000-0000-4000-8000-000000000008 expression:shy	37258316f4aa8260
 00000000-0000-4000-8000-000000000008 expression:sick	f2d32f833f7646f6
 00000000-0000-4000-8000-000000000008 expression:thinking	9323142c2708067b
+00000000-0000-4000-8000-000000000008 season:halloween	f780f459d70bad33
+00000000-0000-4000-8000-000000000008 season:halloween:pumpkin	f780f459d70bad33
+00000000-0000-4000-8000-000000000008 season:halloween:ghost	f780f459d70bad33
+00000000-0000-4000-8000-000000000008 season:christmas	56900b02a31bf37a
+00000000-0000-4000-8000-000000000008 season:christmas:bearded	1f186f1ee981e720
+00000000-0000-4000-8000-000000000008 season:christmas+happy	992b5379035ad627
+00000000-0000-4000-8000-000000000008 season:halloween+mad	88a1bfba6e82d8de
   Mixed Case 9   bg:none	003c90930dacdce5
   Mixed Case 9   bg:square	eef7ad128d730e21
   Mixed Case 9   bg:circle	df0d36a6c2d4208c
@@ -1312,6 +1378,13 @@ café-4 expression:thinking	818817c4a962f77b
   Mixed Case 9   expression:shy	fe6bec07ac86e93f
   Mixed Case 9   expression:sick	762d721554b5a045
   Mixed Case 9   expression:thinking	b44265ed325489ee
+  Mixed Case 9   season:halloween	75fbedb26113f14b
+  Mixed Case 9   season:halloween:pumpkin	55cdee47b9731454
+  Mixed Case 9   season:halloween:ghost	75fbedb26113f14b
+  Mixed Case 9   season:christmas	0ea9b07c8d8128ef
+  Mixed Case 9   season:christmas:bearded	5cafe9b41472e2d3
+  Mixed Case 9   season:christmas+happy	4765c3a456461940
+  Mixed Case 9   season:halloween+mad	a417bcc05142d75b
 user-10 bg:none	91df37090e51d373
 user-10 bg:square	450492375d6786ff
 user-10 bg:circle	7d70514a5694595b
@@ -1339,6 +1412,13 @@ user-10 expression:love	bc2a0ce0753f0713
 user-10 expression:shy	bcb10e333e23e37f
 user-10 expression:sick	627537d6b86d3570
 user-10 expression:thinking	329717e75ec43872
+user-10 season:halloween	dfeabe932b2f7c72
+user-10 season:halloween:pumpkin	81447f3b8d655014
+user-10 season:halloween:ghost	dfeabe932b2f7c72
+user-10 season:christmas	644eb0356884208d
+user-10 season:christmas:bearded	644eb0356884208d
+user-10 season:christmas+happy	5a58eecd2b8dc381
+user-10 season:halloween+mad	3cdb023afe82d206
 alain11@example.com bg:none	515a7bde162902fb
 alain11@example.com bg:square	0c844411201eb935
 alain11@example.com bg:circle	dacdf91b22825435
@@ -1366,3 +1446,10 @@ alain11@example.com expression:love	735a702697ec9cbb
 alain11@example.com expression:shy	d8a6e8a86952e771
 alain11@example.com expression:sick	de297e4f3016daea
 alain11@example.com expression:thinking	faedea2fa0216489
+alain11@example.com season:halloween	a78ac961f5bd6768
+alain11@example.com season:halloween:pumpkin	a78ac961f5bd6768
+alain11@example.com season:halloween:ghost	a78ac961f5bd6768
+alain11@example.com season:christmas	c512c68e6fbe5c06
+alain11@example.com season:christmas:bearded	137fec31a7447bb7
+alain11@example.com season:christmas+happy	b190af8f953aa535
+alain11@example.com season:halloween+mad	15272a0bb317bcc3

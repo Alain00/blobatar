@@ -68,6 +68,7 @@ const OPTIONS = [
   "title",
   "animate",
   "expression",
+  "season",
   "traits",
 ] as const;
 
@@ -85,6 +86,7 @@ export function Blobatar(props: BlobatarProps) {
     contrast: own.contrast,
     title: own.title,
     expression: own.expression,
+    season: own.season,
     traits: own.traits,
   }));
 

@@ -14,6 +14,8 @@
  * the same reason `test/golden/corpus.ts` is shared by the fixture's writer and
  * its checker.
  */
+import { christmas, halloween } from "blobatar/seasonal";
+
 export const CASES: [string, Record<string, unknown>][] = [
   // The bare call is the one that caught a real bug: with no `background`
   // prop declared default, Vue passed an explicit `false` here.
@@ -28,4 +30,8 @@ export const CASES: [string, Record<string, unknown>][] = [
   ["a title", { name: "alain", title: "Alain" }],
   ["normalization off", { name: "  ALAIN  ", normalize: false }],
   ["contrast off", { name: "alain", contrast: false }],
+  // Unlike an expression, a season is in the table: its marks and fit are what
+  // an adapter that draws its own figure would most likely drop.
+  ["a season", { name: "alain", season: halloween }],
+  ["a season with a fit", { name: "alain", season: christmas }],
 ];

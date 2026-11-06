@@ -160,6 +160,7 @@ published package archive.
 | Hover and always motion | Supported | Flutter widget tests cover activation ramps, continuity, reuse, and disposal. |
 | Secondary-eye saccade wrap | Supported | Canvas composition and raster tests verify foreshortening on both eyes. |
 | Pointer gaze API | Not included | Gaze was added after the pinned `2.4.0` contract and requires a separate interaction model. |
+| Seasons | Not included | No `season` option yet. |
 | SVG/string output | Not included | Flutter renders native Canvas paths; use the TypeScript package for SVG markup or data URIs. |
 
 ### Known Rendering Differences

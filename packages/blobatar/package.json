@@ -35,6 +35,10 @@
       "types": "./dist/expression.d.ts",
       "default": "./dist/expression.js"
     },
+    "./seasonal": {
+      "types": "./dist/seasonal.d.ts",
+      "default": "./dist/seasonal.js"
+    },
     "./idle": {
       "types": "./dist/idle.d.ts",
       "default": "./dist/idle.js"

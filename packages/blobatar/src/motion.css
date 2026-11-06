@@ -347,8 +347,10 @@
  * class costs bytes twice — in the markup of every animated blobatar, and in the
  * renderer that has to decide whether to emit it, which is core code every
  * static consumer pays for as well. `.mo-bob` is emitted by exactly one style
- * and has exactly two children, so "the group that is not the eyes" is not a
- * guess about the DOM; it is the whole of it.
+ * and has two children (three when a season adds a costume), so "the group
+ * that is not the eyes" is not a guess about the DOM; it is the whole of it.
+ * The costume's wrapper takes this fill too: its marks in the head colour
+ * inherit it and tint with the body, and its own `<g fill>` runs keep theirs.
  */
 .mo-bob > g:not(.mo-eyes) {
   fill: var(--mo-head);

@@ -34,6 +34,7 @@
     title,
     animate,
     expression,
+    season,
     traits,
     class: className,
     style: styleAttr,
@@ -51,6 +52,7 @@
     contrast,
     title,
     expression,
+    season,
     traits,
   });
 

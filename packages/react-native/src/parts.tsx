@@ -350,6 +350,7 @@ function split({
   contrast,
   title,
   expression,
+  season,
   traits,
   ...rest
 }: BlobatarProps): Parts {
@@ -357,9 +358,33 @@ function split({
     seed,
     size,
     title,
-    opts: { background, backgroundColor, palette, hue, tone, normalize, contrast, expression, traits },
+    opts: {
+      background, backgroundColor, palette, hue, tone, normalize, contrast, expression, season,
+      traits,
+    },
     rest,
   };
+}
+
+/**
+ * A season's costume, drawn after the eyes in its own fills, except that a mark
+ * in the resting head colour `from` takes the travelling one `to`, as the web's
+ * costume wrapper does. Separate from `Body`, which paints every mark in the
+ * head colour, because a hat is not the head.
+ */
+function Costume({ marks, from, to }: { marks: Mark[]; from: string; to: string }) {
+  return (
+    <>
+      {marks.map((m, i) => {
+        const fill = m.fill === from ? to : m.fill;
+        return m.kind === "circle" ? (
+          <Circle key={i} cx={m.cx} cy={m.cy} r={m.r} fill={fill} />
+        ) : (
+          <Path key={i} d={m.d} fill={fill} />
+        );
+      })}
+    </>
+  );
 }
 
 /**
@@ -387,5 +412,5 @@ function split({
  * animate that change instead, reach for `MorphingBlobatar`, and read there
  * why it is a second component rather than a prop on this one.
  */
-export { Frame, Body, split, useMorph, bezier, IN, OUT, easeOut };
+export { Frame, Body, Costume, split, useMorph, bezier, IN, OUT, easeOut };
 export type { Fill };

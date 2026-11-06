@@ -32,6 +32,7 @@ import { serializeVars, type Animate } from "./animate";
 import { _parts, type BlobatarOptions } from "./blobatar";
 import type { Palette } from "./color";
 import type { Expression } from "./expression";
+import type { Season } from "./seasonal";
 import type { TraitOverrides } from "./traits";
 import { blobatarUri } from "./uri";
 
@@ -138,6 +139,8 @@ export const Blobatar = defineComponent({
     },
     /** Which pose the blobatar holds. Import one from `blobatar/expression`. */
     expression: { type: Object as PropType<Expression> },
+    /** A costume for a date. Import one from `blobatar/seasonal`, or `seasonNow()`. */
+    season: { type: Object as PropType<Season> },
   },
   setup(props, { attrs }) {
     /**
@@ -161,6 +164,7 @@ export const Blobatar = defineComponent({
       contrast: props.contrast,
       title: props.title,
       expression: props.expression,
+      season: props.season,
       traits: props.traits,
     }));
 

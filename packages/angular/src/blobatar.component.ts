@@ -123,6 +123,7 @@ export class Blobatar {
   readonly contrast = input<BlobatarOptions["contrast"]>(undefined);
   readonly title = input<BlobatarOptions["title"]>(undefined);
   readonly expression = input<BlobatarOptions["expression"]>(undefined);
+  readonly season = input<BlobatarOptions["season"]>(undefined);
   readonly traits = input<BlobatarOptions["traits"]>(undefined);
 
   /** The `<img>`'s `alt`. Defaults to `title`, then to `""` (decorative). */
@@ -145,6 +146,7 @@ export class Blobatar {
     contrast: this.contrast(),
     title: this.title(),
     expression: this.expression(),
+    season: this.season(),
     traits: this.traits(),
   }));
 
