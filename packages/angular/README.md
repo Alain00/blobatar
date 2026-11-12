@@ -31,7 +31,7 @@ export class UserComponent {
 ```
 
 The inputs are core's options, under the same names every adapter uses —
-`name` (required), `size`, `background`, `backgroundColor`, `palette`, `hue`, `tone`, `traits`,
+`name` (required), `size`, `background`, `backgroundColor`, `palette`, `defs`, `paint`, `hue`, `tone`, `traits`,
 `normalize`, `contrast`, `title`, `expression`, `animate` — plus `alt` for the
 static `<img>`. Full reference in the [main README](https://github.com/Alain00/blobatar#readme).
 

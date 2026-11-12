@@ -149,6 +149,22 @@ One with traits pinned. Fully configured — every trait pinned — the seed sto
 mattering, which is how a consumer builds a single fixed blobatar.
 _Avoid_: custom blobatar, static blobatar. _Static_ already means "not animated".
 
+**Paint server**:
+SVG's word for a fill that is not a flat color: a gradient, or a pattern, which
+can hold an image. The `defs` option hands the caller's markup to the blobatar
+as a `<defs>` block, and the `paint` option says the body is drawn with one of
+them. `paint` replaces what is *drawn* and leaves the *color* where it is, which
+is the point of it being separate from `palette: { head }`: contrast, the eye
+color and a tinting pose all work from the color, and a `url()` is not one to
+work from.
+The library draws no paint server of its own and does not look inside the markup
+it is given.
+Web SVG only: `react-native-svg` and Flutter draw from primitives and have no
+markup to put it in, so those adapters do not take `defs` or `paint`.
+_Avoid_: texture, skin, pattern fill, `fill` option. A texture is one thing a
+paint server can be, and `fill` is an SVG attribute that the React adapter
+already passes to the element, so an option of that name would take it over.
+
 **Tone**:
 A position in the frozen swatch set for `blob`, expressible as 0–1, running
 pale to ink. The swatch set is a **band** table like the silhouettes' and has

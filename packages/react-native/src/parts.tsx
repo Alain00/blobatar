@@ -48,7 +48,9 @@ export type BlobatarProps = {
    * site, where it is visible, instead of a blank square at runtime.
    */
   size: number;
-} & Omit<BlobatarOptions, "animate" | "size"> &
+  // `defs` and `paint` are absent for the same reason `animate` is: they are SVG
+  // markup and paint servers, and `react-native-svg` draws from elements.
+} & Omit<BlobatarOptions, "animate" | "size" | "defs" | "paint"> &
   /**
    * `title` is dropped from the passthrough because `SvgProps` declares one of
    * its own and it is not this one. Ours is the screen-reader label every
