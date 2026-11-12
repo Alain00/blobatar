@@ -117,6 +117,8 @@ export class Blobatar {
   // Annotated, not inferred: the expanded type names core's internal `color`
   // module, which a published declaration file cannot reach (TS2742).
   readonly palette: InputSignal<BlobatarOptions["palette"]> = input<BlobatarOptions["palette"]>(undefined);
+  readonly defs = input<BlobatarOptions["defs"]>(undefined);
+  readonly paint = input<BlobatarOptions["paint"]>(undefined);
   readonly hue = input<BlobatarOptions["hue"]>(undefined);
   readonly tone = input<BlobatarOptions["tone"]>(undefined);
   readonly normalize = input<BlobatarOptions["normalize"]>(undefined);
@@ -139,6 +141,8 @@ export class Blobatar {
     background: this.background(),
     backgroundColor: this.backgroundColor(),
     palette: this.palette(),
+    defs: this.defs(),
+    paint: this.paint(),
     hue: this.hue(),
     tone: this.tone(),
     normalize: this.normalize(),

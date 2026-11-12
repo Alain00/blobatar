@@ -102,6 +102,10 @@ export const Blobatar = defineComponent({
     backgroundColor: { type: String },
     /** Overrides specific palette entries. */
     palette: { type: Object as PropType<Palette> },
+    /** SVG markup for a `<defs>` block, so a `palette` entry can be `url(#id)`. */
+    defs: { type: String },
+    /** What the body is painted with in place of its color, e.g. `url(#id)`. */
+    paint: { type: String },
     /** Locks the hue in degrees, so the name drives shape only. */
     hue: { type: Number },
     /**
@@ -155,6 +159,8 @@ export const Blobatar = defineComponent({
       background: props.background,
       backgroundColor: props.backgroundColor,
       palette: props.palette,
+      defs: props.defs,
+      paint: props.paint,
       hue: props.hue,
       tone: props.tone,
       normalize: props.normalize,

@@ -150,7 +150,7 @@ const angular = async (props: Record<string, unknown>) => {
   const ours = root < 0 ? svg : svg.slice(0, root);
   const core = root < 0 ? "" : svg.slice(root);
   return artifacts(
-    normalize(ours + core.replace(/><\/(path|circle|ellipse|rect|line|polyline|polygon)>/g, "/>")),
+    normalize(ours + core.replace(/><\/(path|circle|ellipse|rect|line|polyline|polygon|stop|image)>/g, "/>")),
   );
 };
 
@@ -218,8 +218,35 @@ describe("every adapter renders a blobatar at all", () => {
   }
 });
 
+/**
+ * Cases the web adapters share and React Native cannot take, so they are not in
+ * `CASES`, which both files read. `defs` is SVG markup, and `react-native-svg`
+ * draws from elements — the prop is absent from that adapter's type, as
+ * `animate` is, rather than accepted and ignored. `paint` goes with `defs`.
+ */
+const WEB_ONLY: [string, Record<string, unknown>][] = [
+  [
+    "a paint server",
+    {
+      name: "alain",
+      defs: '<linearGradient id="sky"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#818cf8"/></linearGradient>',
+      paint: "url(#sky)",
+    },
+  ],
+  [
+    "a paint server, a title and a backdrop",
+    {
+      name: "alain",
+      title: "Alain",
+      background: "circle",
+      defs: '<pattern id="skin" patternUnits="userSpaceOnUse" width="100" height="100"><rect width="100" height="100" fill="#fde68a"/></pattern>',
+      paint: "url(#skin)",
+    },
+  ],
+];
+
 describe("the adapters render the same blobatar", () => {
-  for (const [what, props] of CASES) {
+  for (const [what, props] of [...CASES, ...WEB_ONLY]) {
     for (const [name, render] of OTHERS) {
       test(`static: ${what} — ${name}`, async () => {
         expect(picture(await render(props))).toBe(picture(react(props)));
