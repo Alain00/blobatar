@@ -102,7 +102,7 @@ export const Blobatar = defineComponent({
     backgroundColor: { type: String },
     /** Overrides specific palette entries. */
     palette: { type: Object as PropType<Palette> },
-    /** SVG markup for a `<defs>` block, so a `palette` entry can be `url(#id)`. */
+    /** SVG markup for a `<defs>` block, so `paint` can point at `url(#id)`. */
     defs: { type: String },
     /** What the body is painted with in place of its color, e.g. `url(#id)`. */
     paint: { type: String },
