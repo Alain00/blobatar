@@ -92,8 +92,14 @@ const ENTRIES: {
     // and a cube root — `fromHex` would have cost roughly twice as much again,
     // since nothing else in the core reaches the OKLab decode. Every entry
     // below that renders carries the same bytes for the same reason.
+    //
+    // Raised from 4480 by 50 B for `defs` and `paint`: the `<defs>` wrapper around a
+    // caller's markup, and the body's paint swapped in after the tint, each written
+    // once and used by both `makeBlobatar` and `makeParts`, plus `--mo-head` taking
+    // the paint ahead of the tinted color. Every entry below that renders carries
+    // the same bytes for the same reason.
     name: "blob only",
-    budget: 4480,
+    budget: 4530,
     external: [] as string[],
     source: `import { blobatar } from "../../src/blob";
              globalThis.x = blobatar(String(globalThis.seed));`,
@@ -102,14 +108,14 @@ const ENTRIES: {
     // The barrel. Costs more than `blob only` above because it also carries the
     // colour and trait utilities, which a consumer who only renders never touches.
     name: "barrel",
-    budget: 4470,
+    budget: 4520,
     external: [],
     source: `import { blobatar } from "../../src/index";
              globalThis.x = blobatar(String(globalThis.seed));`,
   },
   {
     name: "uri",
-    budget: 4570,
+    budget: 4620,
     external: [],
     source: `import { blobatarUri } from "../../src/uri";
              globalThis.x = blobatarUri(String(globalThis.seed));`,
@@ -134,8 +140,11 @@ const ENTRIES: {
     // correct — a `var()` with nothing behind it makes `fill` inherit black.
     //
     // Raised from 5370 by 120 B for `backgroundColor` — see "blob only".
+    //
+    // Raised from 5490 by 65 B for `defs` and `paint` — see "blob only" — plus the
+    // two props named in the component's destructure and in the options it builds.
     name: "react",
-    budget: 5490,
+    budget: 5555,
     external: ["react"],
     source: `import { Blobatar } from "../../src/react";
              globalThis.x = Blobatar;`,
@@ -147,7 +156,7 @@ const ENTRIES: {
     // Measured: +343 B for the first expression (the shared serializer and bake,
     // paid once) and +36 B for each one after it. Importing all three is 4098.
     name: "blob + happy",
-    budget: 4810,
+    budget: 4860,
     external: [],
     source: `import { blobatar } from "../../src/blob";
              import { happy } from "../../src/expression";
@@ -174,8 +183,11 @@ const ENTRIES: {
     //
     // Raised from 5650 by 70 B for `backgroundColor` — see "blob only" — plus
     // the runtime prop declaration, keeping the slack described above.
+    //
+    // Raised from 5720 by 75 B for `defs` and `paint` — see "blob only" — plus the
+    // two runtime prop declarations and their lines in the options object.
     name: "vue",
-    budget: 5720,
+    budget: 5795,
     external: ["vue"],
     source: `import { Blobatar } from "../../src/vue";
              globalThis.x = Blobatar;`,

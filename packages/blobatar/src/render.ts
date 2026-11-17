@@ -21,6 +21,54 @@ export interface BlobatarOptions {
   backgroundColor?: string;
   /** Overrides specific palette entries. Overridden colors bypass the contrast guarantee. */
   palette?: Palette;
+  /**
+   * SVG markup for a `<defs>` block: the paint servers (gradients, patterns,
+   * an image inside a pattern) that `paint` can point at. Emitted as given,
+   * unescaped, so pass nothing you did not author.
+   *
+   * Coordinates are the blobatar's own, a 100 × 100 viewBox, so a pattern that
+   * should cover the whole figure is `patternUnits="userSpaceOnUse"` with
+   * `width="100" height="100"`. Draws nothing until something points at it.
+   *
+   * Ids are document-global once the SVG is inline (the string API, or an
+   * adapter with `animate`), so one paint server should keep one id and two
+   * different ones two different ids. In `blobatarUri` and in the adapters'
+   * static `<img>` the SVG is its own document and ids cannot collide; there an
+   * `<image>` inside `defs` can load `data:` URIs only, because an image
+   * document may not fetch anything else, and `blobatarUri` writes attribute
+   * values in single quotes, so keep those out of yours (base64 has none).
+   *
+   * Web SVG only. `@blobatar/react-native` and the Flutter port draw with
+   * primitives and have no markup to put it in, so they do not take it.
+   */
+  defs?: string;
+  /**
+   * What the body is painted with, in place of its color: `url(#id)` for a
+   * paint server from `defs`, or from elsewhere in the page when the SVG is
+   * inline. Any CSS paint is accepted.
+   *
+   * ```ts
+   * blobatar(user.email, {
+   *   defs: `<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+   *            <stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#818cf8"/>
+   *          </linearGradient>`,
+   *   paint: "url(#sky)",
+   * });
+   * ```
+   *
+   * The color is still resolved, and still does its work: the eyes keep the
+   * contrast they were given against it, and a tinting `expression` still
+   * works from it. That is the difference from `palette: { head }`, which
+   * replaces the color, so a tinting pose has no color to mix and the body
+   * comes out a flat color with the paint gone. A tint reaches the eyes and not
+   * the body, whose paint is yours.
+   * Set `palette.head` as well to choose the color the eyes are measured
+   * against, for a paint of a known lightness.
+   *
+   * The body only. The eyes and the backdrop are colors: `palette` and
+   * `backgroundColor`. Web SVG only, like `defs`.
+   */
+  paint?: string;
   /** Locks the hue in degrees, so the name drives shape only. */
   hue?: number;
   /**
@@ -183,6 +231,18 @@ export function resolve(
 const label = (opts: BlobatarOptions) =>
   opts.title ? `<title>${escape(opts.title)}</title>` : "";
 
+/** The caller's paint servers, if any were given. */
+const defs = (opts: BlobatarOptions) =>
+  opts.defs ? `<defs>${opts.defs}</defs>` : "";
+
+/**
+ * The palette the figure is drawn with: the resolved one, with the body's paint
+ * swapped in last. After the tint rather than before it, because the tint works
+ * from colors and a `url()` is not one.
+ */
+const drawn = (p: Palette, opts: BlobatarOptions): Palette =>
+  opts.paint ? { ...p, head: opts.paint } : p;
+
 /** The plate behind the figure, as geometry rather than as markup. */
 export interface Backdrop {
   d: string;
@@ -261,8 +321,9 @@ export function makeBlobatar<L>(style: Style<L>) {
     // with the creature stops being a plate.
     const body =
       label(opts) +
+      defs(opts) +
       plate(backdrop(style, opts, p)) +
-      wrap(style.render(pose.l, p), pose.wrap);
+      wrap(style.render(pose.l, drawn(p, opts)), pose.wrap);
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"${dim}>${body}</svg>`;
   };
 }
@@ -304,8 +365,16 @@ export function makeParts<L>(style: Style<L>) {
       /** Goes on the root `<g>`, which the caller renders. */
       cls: mo?.cls,
       bg: backdrop(style, opts, p),
-      /** Everything below the root `<g>`. Free of both of the above. */
-      inner: wrap(style.render(pose.l, p, !!mo), pose.wrap),
+      /**
+       * Everything below the root `<g>`. Free of both of the above.
+       *
+       * The paint servers lead it, inside the root rather than beside it, so no
+       * adapter has a new child to render. `defs` does not vary with the
+       * expression, so the invariant above holds. It sits outside the pose wrap
+       * because nothing in it is drawn: a paint server is laid out in the space
+       * of the element it fills, so the pose still carries the paint with it.
+       */
+      inner: defs(opts) + wrap(style.render(pose.l, drawn(p, opts), !!mo), pose.wrap),
       vars: mo?.vars,
     };
   };

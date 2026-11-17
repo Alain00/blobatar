@@ -154,8 +154,9 @@ precomposed and decomposed spellings of `café`. Pass `normalize: false` to hash
 the raw string. Hashing runs over UTF-8 bytes, so non-ASCII and astral-plane
 names (`日本語`, `🦊`) behave consistently across engines.
 
-**No element ids.** Nothing uses `<defs>`, gradients or filters, so rendering
-several hundred blobatars on one page cannot produce id collisions.
+**No element ids.** Unless you pass `defs`, nothing uses `<defs>`, gradients or
+filters, so rendering several hundred blobatars on one page cannot produce id
+collisions.
 
 ## Options
 
@@ -168,6 +169,8 @@ several hundred blobatars on one page cannot produce id collisions.
 | `tone`            | —       | Locks the swatch as a 0–1 position in the set, pale to ink. `1` sits on the top edge and renders as `0`; use `0.999` for ink. |
 | `traits`          | —       | Pins individual traits as 0–1 positions, or a list to choose among. See below. |
 | `palette`         | —       | Per-key hex overrides. Bypasses the contrast guarantee.                 |
+| `defs`            | —       | SVG markup for a `<defs>` block: gradients, or a pattern holding an image. See below. Not in React Native or Flutter. |
+| `paint`           | —       | What the body is painted with in place of its color, e.g. `url(#id)` into `defs`. The color still sets contrast and tint. See below. Not in React Native or Flutter. |
 | `normalize`       | `true`  | NFC + trim + lowercase.                                                 |
 | `contrast`        | `true`  | Enforce the contrast floors.                                            |
 | `title`           | —       | Adds a `<title>` for screen readers.                                    |
@@ -220,6 +223,69 @@ major alongside the shape thresholds and the tone set.
 Trait names are not enumerated here on purpose: they follow the layout. Read the
 shared ones off `styles/compose.ts` and the per-silhouette ones off
 `styles/shapes.ts`, or let the editor write the map for you.
+
+## Paint servers
+
+A body can be filled with a gradient or an image instead of a flat color.
+`defs` is where you define the paint server, and `paint` says the body wears it:
+
+```ts
+blobatar(user.email, {
+  defs: `<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+           <stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#818cf8"/>
+         </linearGradient>`,
+  paint: "url(#sky)",
+});
+```
+
+The name still drives the shape, and nothing else moves. The markup in `defs` is
+emitted as you wrote it, unescaped, so pass nothing you did not author.
+
+Coordinates are the blobatar's own, a 100 × 100 viewBox. A pattern that should
+cover the whole figure is `patternUnits="userSpaceOnUse"` with `width="100"
+height="100"`, and it can layer as many things as you like: a base color, an
+image, a gradient over the image to round the body.
+
+```ts
+blobatar(user.email, {
+  defs: `<pattern id="skin" patternUnits="userSpaceOnUse" width="100" height="100">
+           <rect width="100" height="100" fill="#fde68a"/>
+           <image href="data:image/jpeg;base64,…" width="100" height="100" preserveAspectRatio="none"/>
+           <radialGradient id="light" gradientUnits="userSpaceOnUse" cx="42" cy="36" r="56">
+             <stop stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#000" stop-opacity=".22"/>
+           </radialGradient>
+           <rect width="100" height="100" fill="url(#light)"/>
+         </pattern>`,
+  paint: "url(#skin)",
+});
+```
+
+`paint` replaces what the body is drawn with and leaves the color alone, so
+everything that works from the color keeps working. The eyes keep the contrast
+they were given, and a tinting `expression` still tints the eyes. The body does
+not tint: its paint is yours. That is the difference from `palette: { head }`,
+which replaces the color itself: a tinting `expression` then has no color to
+mix, and the body ends up a computed flat color with the paint gone. `palette.head` can still be set next to `paint`, to choose the
+color the eyes are measured against.
+
+**Static, as an `<img>` or a `data:` URI.** `blobatarUri` and the adapters'
+static `<img>` carry `defs` inside the image, which is its own document: ids
+cannot collide, and an `<image>` there can load `data:` URIs only, because an
+image document may not fetch anything else. `blobatarUri` writes attribute
+values in single quotes, so keep single quotes out of the attribute values in
+`defs`; a base64 `data:` URI has none.
+
+**Inline, in the string API or with `animate`.** The SVG is part of your page,
+and ids are document-global. Give one paint server one id and two different ones
+two ids; when many blobatars share one, each repeats the same markup, which
+browsers resolve to the first. To define it once instead, leave `defs` out and
+put the paint server in a zero-size `<svg width="0" height="0">` that stays in
+the document (not `display: none`, which some browsers do not paint from).
+`paint` is then `url(#id)` as before: the animated figure reads it through
+`--mo-head`, which is where it goes in front of the tinted color.
+
+`defs` and `paint` are web SVG. `@blobatar/react-native` and the Flutter port
+draw from primitives and have no markup to put them in, so they do not take them.
 
 ## Animation
 
