@@ -32,6 +32,7 @@ browser — see below.
 - `packages/flutter` — the Dart/Flutter SDK, published separately to pub.dev;
   its deterministic core is checked against a pinned generation-2 reference
   artifact and its widgets render with native Canvas paths.
+- `packages/python` — the Python/Flask SDK, published to PyPI; ports the generation-2 core to pure Python and passes the same reference-vectors fixture as the Flutter SDK.
 - `apps/site` — the landing page, and the deployable that puts the endpoint on
   blobatar.dev.
 - `apps/api` — the endpoint, `GET /avatar/<name>`, also deployable on its own.
@@ -74,6 +75,8 @@ dry run on the minimum supported Flutter line and current stable Flutter 3.x.
 Run the same local checks from `packages/flutter` as documented in that
 package's README.
 
+
+The Python SDK follows the same pattern: it reimplements the generation-2 contract and publishes through PyPI. Its CI job runs pytest against the reference-vectors fixture (hash, palette, overrides, expressions, layout geometry, eye paths, body paths — 1570 cases). Run locally with `cd packages/python && python -m pytest -v`.
 ## The things that are not yours to change casually
 
 **The golden fixture.** `test/golden/gen2.txt` pins the seed → look mapping. A

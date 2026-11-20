@@ -154,6 +154,58 @@ AnimatedBlobatar(
 
 The official Dart/Flutter SDK lives in
 [`packages/flutter`](./packages/flutter). It ports the generation-2 core
+
+### Python and Flask
+
+```bash
+pip install blobatar
+
+# With Flask integration
+pip install "blobatar[flask]"
+```
+
+```python
+from blobatar import blobatar
+
+svg = blobatar("alain00")
+svg = blobatar("alain00", background="circle", expression="happy")
+```
+
+Flask adapter:
+
+```python
+from flask import Flask
+from blobatar.flask import init_app, blobatar_filter
+
+app = Flask(__name__)
+init_app(app)  # registers GET /avatar/<name>
+
+# Jinja2 filter: {{ "alain00" | blobatar(size=48) }}
+```
+
+The official Python SDK lives in
+[`packages/python`](./packages/python). It ports the generation-2 core to
+pure Python (no Node.js dependency), passes the same reference-vectors
+fixture as the Flutter SDK, and includes a Flask adapter that mirrors the
+upstream HTTP endpoint behavior.
+
+
+### Python and Flask
+
+
+
+
+
+Flask adapter:
+
+
+
+The official Python SDK lives in
+[](./packages/python). It ports the generation-2 core to
+pure Python (no Node.js dependency), passes the same reference-vectors
+fixture as the Flutter SDK, and includes a Flask adapter that mirrors the
+upstream HTTP endpoint behavior.
+
 rather than calling into JavaScript, renders native Canvas paths, and includes
 static and animated widgets. Its checked-in reference vectors pin blobatar
 `2.4.0`; the seed-to-look mapping is unchanged. See the package README for
