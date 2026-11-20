@@ -49,6 +49,13 @@ apps/site/*.html
 .wrangler
 .turbo/
 
+# Swift Package Manager and Xcode user output
+.build/
+.swiftpm/
+DerivedData/
+xcuserdata/
+*.xcuserstate
+
 # wrangler secrets: Turnstile keys, the wall's salts, the commercial config
 .dev.vars
 .dev.vars.*

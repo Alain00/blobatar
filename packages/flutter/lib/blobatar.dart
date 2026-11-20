@@ -10,7 +10,7 @@
 /// Flutter painters and widgets live in `package:blobatar/flutter.dart` and
 /// remain outside this library's dependency boundary.
 ///
-/// Parity: the fixture in `test/fixtures/reference-vectors.json` was exported
+/// Parity: the repository fixture `fixtures/blobatar-v2.4.0.json` was exported
 /// once from the TypeScript implementation at blobatar `2.4.0` and is the
 /// definition of correct this port is checked against.
 library;
